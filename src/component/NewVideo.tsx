@@ -12,6 +12,20 @@ import {
   useLocalSessionId,
 } from "@daily-co/daily-react";
 import axios from "axios";
+import * as yup from "yup";
+
+// Define a validation schema
+const validationSchema = yup.object().shape({
+  name: yup.string().required("Name is required"),
+  email: yup
+    .string()
+    .email("Invalid email format")
+    .required("Email is required"),
+  phone: yup
+    .string()
+    .matches(/^\d+$/, "Phone must be a number")
+    .required("Phone is required"),
+});
 
 const RavanPremiumInterface = () => {
   const [formData, setFormData] = useState({
@@ -22,6 +36,11 @@ const RavanPremiumInterface = () => {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
 
   const meetingState = useMeetingState();
   const [isLoading, setIsLoading] = useState(false);
@@ -85,22 +104,31 @@ const RavanPremiumInterface = () => {
     daily?.setLocalAudio(!isMicEnabled);
   }, [daily, isMicEnabled]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsConnecting(true);
-
-    // Simulate connection process - shorter for demo purposes
-    setTimeout(() => {
+    try {
+      await validationSchema.validate(formData, { abortEarly: false });
+      // Proceed with form submission
+      console.log("Form is valid:", formData);
+      await handleClick();
+    } catch (validationErrors) {
+      const formattedErrors = validationErrors.inner.reduce(
+        (acc: any, error: any) => {
+          acc[error.path] = error.message;
+          return acc;
+        },
+        {}
+      );
+      setErrors(formattedErrors);
+    } finally {
       setIsConnecting(false);
-      setIsConnected(true);
-    }, 1500);
+    }
   };
 
   // Effect to ensure the form disappears when connected
@@ -130,85 +158,63 @@ const RavanPremiumInterface = () => {
 
   return (
     <div
-      className="relative w-full max-w-6xl mx-auto overflow-hidden rounded-3xl shadow-2xl bg-[#fefbf3]"
-      style={{ height: "600px" }}
+      className={`m-4  md:h-[580px] md:max-w-6xl mx-auto overflow-hidden rounded-3xl shadow-2xl bg-[#fefbf3] ${
+        meetingState === "joined-meeting" ? "h-[219.38px]" : "h-[600px]"
+      }`}
     >
-      {/* Decorative elements */}
-      <div
-        className="absolute top-0 left-0 w-80 h-80 rounded-full opacity-30 blur-3xl z-0"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(255,85,0,0.3) 0%, rgba(255,212,167,0) 70%)",
-        }}
-      ></div>
-      <div
-        className="absolute bottom-0 right-0 w-80 h-80 rounded-full opacity-30 blur-3xl z-0"
-        style={{
-          background:
-            "radial-gradient(circle, rgba(255,85,0,0.2) 0%, rgba(255,212,167,0) 70%)",
-        }}
-      ></div>
-
-      <div className="flex h-full">
+      <div className=" md:flex w-full h-full">
         {/* Avatar Video Side - Expands to full width when connected */}
         <div
-          className={`relative z-10 transition-all duration-700 ease-in-out ${
+          className={`relative z-10 transition-all duration-700 ease-in-out w-full ${
             isConnected ? "w-full" : "w-2/3"
           }`}
           style={{
             boxShadow: isConnected ? "none" : "10px 0 30px rgba(0,0,0,0.03)",
           }}
         >
-          <div className="relative w-full h-full">
+          <div className="w-full h-full">
             {/* Avatar Video */}
-            <div
-              className={`absolute inset-0 flex items-center justify-center overflow-hidden ${
-                isConnected ? "rounded-3xl" : "rounded-l-3xl"
-              } transition-all duration-700`}
-            >
-              <div className=" h-full w-full flex justify-center items-center">
-                {meetingState === "joined-meeting" ? (
-                  <div>
-                    <DailyVideo
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                      }}
-                      fit="contain"
-                      type="video"
-                      sessionId={remoteParticipantIds[0]}
-                      onResize={handleResize}
-                    />
-                    <DailyVideo
-                      className="absolute bottom-[79px] right-4 aspect-video h-40 w-24 overflow-hidden  lg:h-auto lg:w-52"
-                      fit="contain"
-                      type="video"
-                      sessionId={localSessionId}
-                      onResize={handleResize}
-                    />
-                  </div>
-                ) : (
-                  <video
-                    src="https://cdn.prod.website-files.com/63b2f566abde4cad39ba419f%2F67b5222642c2133d9163ce80_newmike-transcode.mp4"
-                    autoPlay
-                    muted
-                    loop
-                    className="w-full h-full object-cover"
-                  ></video>
-                )}
-              </div>
 
-              {/* Glowing border accent */}
-              <div
-                className={`absolute inset-0 pointer-events-none transition-all duration-700 ${
-                  isConnected ? "rounded-3xl" : "rounded-l-3xl"
-                }`}
-                style={{
-                  boxShadow: "inset 0 0 30px rgba(255, 85, 0, 0.15)",
-                  border: "1px solid rgba(255, 85, 0, 0.1)",
-                }}
-              ></div>
-            </div>
+            {meetingState === "joined-meeting" ? (
+              <div>
+                <DailyVideo
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                  }}
+                  fit="contain"
+                  type="video"
+                  sessionId={remoteParticipantIds[0]}
+                  // onResize={handleResize}
+                />
+                <DailyVideo
+                  className="absolute bottom-[79px] right-4 aspect-video h-40 w-24 overflow-hidden  lg:h-auto lg:w-52"
+                  fit="contain"
+                  type="video"
+                  sessionId={localSessionId}
+                  onResize={handleResize}
+                />
+              </div>
+            ) : (
+              <video
+                src="https://cdn.prod.website-files.com/63b2f566abde4cad39ba419f%2F67b5222642c2133d9163ce80_newmike-transcode.mp4"
+                autoPlay
+                muted
+                loop
+                className="w-full h-full object-cover"
+              ></video>
+            )}
+
+            {/* Glowing border accent */}
+            <div
+              className={`absolute inset-0 pointer-events-none transition-all duration-700 ${
+                isConnected ? "rounded-3xl" : "rounded-l-3xl"
+              }`}
+              style={{
+                boxShadow: "inset 0 0 30px rgba(255, 85, 0, 0.15)",
+                border: "1px solid rgba(255, 85, 0, 0.1)",
+              }}
+            ></div>
 
             {/* Status badge */}
             <div className="absolute top-6 left-6 z-20">
@@ -231,97 +237,99 @@ const RavanPremiumInterface = () => {
             </div>
 
             {/* Control overlay */}
-            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20">
-              <div className="flex items-center space-x-3 bg-black/20 backdrop-blur-md rounded-full px-5 py-3 shadow-lg border border-white/10">
-                <button
-                  onClick={toggleAudio}
-                  className="text-white p-2 rounded-full hover:bg-white/20 transition"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                  </svg>
-                </button>
-
-                <button
-                  onClick={toggleVideo}
-                  className="text-white p-2 rounded-full hover:bg-white/20 transition"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M23 7l-7 5 7 5V7z"></path>
-                    <rect
-                      x="1"
-                      y="5"
-                      width="15"
-                      height="14"
-                      rx="2"
-                      ry="2"
-                    ></rect>
-                  </svg>
-                </button>
-
-                <div className="flex items-center space-x-1 h-6 px-3">
-                  {[...Array(5)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="w-1.5 rounded-full"
-                      style={{
-                        height: `${
-                          5 +
-                          (isConnected
-                            ? Math.sin((i / 5) * Math.PI) * audioLevel * 16
-                            : 0)
-                        }px`,
-                        backgroundColor: "#ff5500",
-                        transition: "height 0.1s ease-in-out",
-                        opacity: isConnected ? 1 : 0.4,
-                      }}
-                    ></div>
-                  ))}
-                </div>
-
-                {isConnected && (
+            {!isConnecting && (
+              <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20">
+                <div className="flex items-center space-x-3 bg-black/20 backdrop-blur-md rounded-full px-5 py-3 shadow-lg border border-white/10">
                   <button
-                    onClick={handleEnd}
-                    className="bg-red-500/80 hover:bg-red-600 text-white px-3 py-1.5 rounded-full text-xs font-medium transition shadow-lg"
+                    onClick={toggleAudio}
+                    className="text-white p-2 rounded-full hover:bg-white/20 transition"
                   >
-                    End
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                    </svg>
                   </button>
-                )}
+
+                  <button
+                    onClick={toggleVideo}
+                    className="text-white p-2 rounded-full hover:bg-white/20 transition"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M23 7l-7 5 7 5V7z"></path>
+                      <rect
+                        x="1"
+                        y="5"
+                        width="15"
+                        height="14"
+                        rx="2"
+                        ry="2"
+                      ></rect>
+                    </svg>
+                  </button>
+
+                  <div className="flex items-center space-x-1 h-6 px-3">
+                    {[...Array(5)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="w-1.5 rounded-full"
+                        style={{
+                          height: `${
+                            5 +
+                            (isConnected
+                              ? Math.sin((i / 5) * Math.PI) * audioLevel * 16
+                              : 0)
+                          }px`,
+                          backgroundColor: "#ff5500",
+                          transition: "height 0.1s ease-in-out",
+                          opacity: isConnected ? 1 : 0.4,
+                        }}
+                      ></div>
+                    ))}
+                  </div>
+
+                  {isConnected && (
+                    <button
+                      onClick={handleEnd}
+                      className="bg-red-500/80 hover:bg-red-600 text-white px-3 py-1.5 rounded-full text-xs font-medium transition shadow-lg"
+                    >
+                      End
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
         {/* Form Side - Only visible when not connected */}
         {!isConnected && (
           <div
-            className="w-1/3 flex flex-col justify-center p-8 z-10 bg-white/50 backdrop-blur-sm rounded-r-3xl transition-all duration-700 ease-in-out"
+            className=" md-w-[415px] flex flex-col justify-center p-8 z-10 bg-white/50 backdrop-blur-sm rounded-r-3xl transition-all duration-700 ease-in-out"
             style={{
               boxShadow: "inset 0 0 20px rgba(255, 255, 255, 0.5)",
               border: "1px solid rgba(255, 255, 255, 0.3)",
             }}
           >
             <div className="space-y-7">
-              <div className="text-center space-y-2">
+              <div className="hidden md:block text-center space-y-2">
                 <h2 className="text-3xl font-bold" style={{ color: "#222" }}>
                   Let's Get Started
                 </h2>
@@ -432,7 +440,6 @@ const RavanPremiumInterface = () => {
                 <button
                   type="submit"
                   disabled={isConnecting}
-                  onClick={handleClick}
                   className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-xl text-white font-medium text-lg transition-all shadow-lg"
                   style={{
                     background: isConnecting
@@ -500,21 +507,20 @@ const RavanPremiumInterface = () => {
           </div>
         )}
       </div>
-
       {/* Connected overlay - Only visible when connected */}
-      {isConnected && (
-        <div className="absolute bottom-20 left-0 right-0 flex justify-center z-20 animate-fadeIn">
-          <div className="bg-white/20 backdrop-blur-lg text-gray-800 px-6 py-3 rounded-full shadow-lg border border-white/30 flex items-center space-x-3">
-            <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="font-medium">Connected with {formData.name}</span>
-            <span className="h-3 w-px bg-gray-400/30"></span>
-            <span className="text-xs text-gray-600">00:08</span>
-          </div>
-        </div>
-      )}
+      {/* {isConnected && ( */}
+      {/* // <div className="absolute bottom-20 left-0 right-0 flex justify-center z-20 animate-fadeIn"> */}
+      {/* //   <div className="bg-white/20 backdrop-blur-lg text-gray-800 px-6 py-3 rounded-full shadow-lg border border-white/30 flex items-center space-x-3"> */}
+      {/* //     <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div> */}
 
+      {/* <span className="font-medium">Connected with {formData.name}</span> */}
+      {/* //     <span className="h-3 w-px bg-gray-400/30"></span> */}
+      {/* //     <span className="text-xs text-gray-600">00:08</span> */}
+      {/* //   </div> */}
+      {/* // </div> */}
+      {/* // )} */}
       {/* Animation of success circle when connecting */}
-      {isConnecting && (
+      {/* {isConnecting && (
         <div className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none">
           <div className="relative">
             <div
@@ -547,7 +553,7 @@ const RavanPremiumInterface = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
       <DailyAudio />
     </div>
   );
