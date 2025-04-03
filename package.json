@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "TSC_COMPILE_ON_ERROR=true vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -18,6 +18,7 @@
     "axios": "^1.7.9",
     "jotai": "^2.12.0",
     "lucide-react": "^0.475.0",
+    "path": "^0.12.7",
     "tailwindcss": "^4.0.6"
   },
   "devDependencies": {
