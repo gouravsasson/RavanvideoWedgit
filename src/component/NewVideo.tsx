@@ -36,19 +36,22 @@ const RavanPremiumInterface = () => {
     setIsLoading(true);
     try {
       const createConversation = await axios.post(
-        "https://tavusapi.com/v2/conversations",
+        "https://app.snowie.ai/api/start-avatar-call/",
         {
           // replica_id: "r3fbe3834a3e",
-          persona_id: "pd9671d95e32",
+          agent_code: "0f395326-10a0-4869-bd5b-f425d85ec235",
+          schema_name: "6af30ad4-a50c-4acc-8996-d5f562b6987f",
+          name: formData.name,
+          email: formData.email,
+          phone_number: formData.phone,
         },
         {
           headers: {
             "Content-Type": "application/json",
-            "x-api-key": "87ed3f693aae48119b61b04105f7d562",
           },
         }
       );
-      const url = createConversation.data.conversation_url;
+      const url = createConversation.data.response.conversation_url;
       await daily
         ?.join({
           url: url,
@@ -68,12 +71,12 @@ const RavanPremiumInterface = () => {
     setIsConnected(false);
   };
 
-  // const handleResize = useCallback(
-  //   (dimensions: { width: 1280; height: 720; aspectRatio: 1.777 }) => {
-  //     console.log("Video resized:", dimensions);
-  //   },
-  //   []
-  // );
+  const handleResize = useCallback(
+    (dimensions: { width: 1280; height: 720; aspectRatio: 1.777 }) => {
+      console.log("Video resized:", dimensions);
+    },
+    []
+  );
   const toggleVideo = useCallback(() => {
     daily?.setLocalVideo(!isCameraEnabled);
   }, [daily, isCameraEnabled]);
@@ -164,9 +167,12 @@ const RavanPremiumInterface = () => {
               } transition-all duration-700`}
             >
               <div className=" h-full w-full flex justify-center items-center">
-                <div>
+                <div className="w-full h-full">
                   <DailyVideo
-                    className="size-full"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                    }}
                     fit="contain"
                     type="video"
                     sessionId={remoteParticipantIds[0]}
