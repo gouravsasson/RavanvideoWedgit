@@ -167,25 +167,32 @@ const RavanPremiumInterface = () => {
               } transition-all duration-700`}
             >
               <div className=" h-full w-full flex justify-center items-center">
-                <div className="w-full h-full">
-                  <DailyVideo
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                    }}
-                    fit="contain"
-                    type="video"
-                    sessionId={remoteParticipantIds[0]}
-                    // onResize={handleResize}
-                  />
-                  <DailyVideo
-                    className="absolute bottom-[79px] right-4 aspect-video h-40 w-24 overflow-hidden  lg:h-auto lg:w-52"
-                    fit="contain"
-                    type="video"
-                    sessionId={localSessionId}
-                    // onResize={handleResize}
-                  />
-                </div>
+                {meetingState === "joined-meeting" ? (
+                  <div>
+                    <DailyVideo
+                      className="size-full"
+                      fit="contain"
+                      type="video"
+                      sessionId={remoteParticipantIds[0]}
+                      onResize={handleResize}
+                    />
+                    <DailyVideo
+                      className="absolute bottom-[79px] right-4 aspect-video h-40 w-24 overflow-hidden  lg:h-auto lg:w-52"
+                      fit="contain"
+                      type="video"
+                      sessionId={localSessionId}
+                      onResize={handleResize}
+                    />
+                  </div>
+                ) : (
+                  <video
+                    src="https://cdn.prod.website-files.com/63b2f566abde4cad39ba419f%2F67b5222642c2133d9163ce80_newmike-transcode.mp4"
+                    autoPlay
+                    muted
+                    loop
+                    className="w-full h-full object-cover"
+                  ></video>
+                )}
               </div>
 
               {/* Glowing border accent */}
