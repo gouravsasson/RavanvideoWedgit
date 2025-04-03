@@ -165,8 +165,8 @@ const RavanPremiumInterface = () => {
       <div className=" md:flex w-full h-full">
         {/* Avatar Video Side - Expands to full width when connected */}
         <div
-          className={`relative z-10 transition-all duration-700 ease-in-out w-full ${
-            isConnected ? "w-full" : "w-2/3"
+          className={` relative z-10 transition-all duration-700 ease-in-out  ${
+            isConnected ? "md:w-full" : "md:w-2/3"
           }`}
           style={{
             boxShadow: isConnected ? "none" : "10px 0 30px rgba(0,0,0,0.03)",
@@ -322,7 +322,7 @@ const RavanPremiumInterface = () => {
         {/* Form Side - Only visible when not connected */}
         {!isConnected && (
           <div
-            className=" md-w-[415px] flex flex-col justify-center p-8 z-10 bg-white/50 backdrop-blur-sm rounded-r-3xl transition-all duration-700 ease-in-out"
+            className=" md-w-[500px] flex flex-col justify-center p-8 z-10 bg-white/50 backdrop-blur-sm rounded-r-3xl transition-all duration-700 ease-in-out"
             style={{
               boxShadow: "inset 0 0 20px rgba(255, 255, 255, 0.5)",
               border: "1px solid rgba(255, 255, 255, 0.3)",
