@@ -90,6 +90,18 @@ const RavanPremiumInterface = () => {
     setIsConnected(false);
   };
 
+  function handleAppMessage(event) {
+    const { data } = event;
+    if (data.type === "function_call") {
+      // Handle the function call
+      // handleFunctionCall(data.name, data.arguments);
+      console.log("function_call", data.name, data.arguments);
+    }
+  }
+  
+  // Attach the callback
+  daily?.on("app-message", handleAppMessage);
+
   const handleResize = useCallback(
     (dimensions: { width: 1280; height: 720; aspectRatio: 1.777 }) => {
       console.log("Video resized:", dimensions);
