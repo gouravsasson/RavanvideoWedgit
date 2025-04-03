@@ -170,7 +170,10 @@ const RavanPremiumInterface = () => {
                 {meetingState === "joined-meeting" ? (
                   <div>
                     <DailyVideo
-                      className="size-full"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                      }}
                       fit="contain"
                       type="video"
                       sessionId={remoteParticipantIds[0]}
