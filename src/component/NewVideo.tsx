@@ -49,7 +49,7 @@ const RavanPremiumInterface = () => {
   const localAudio = useAudioTrack(localSessionId);
   const isCameraEnabled = !localVideo.isOff;
   const isMicEnabled = !localAudio.isOff;
-  const agent_code = "f74e5e28-db78-4a12-9a63-f47ff9873b88";
+  const agent_code = "74693076-7c01-4615-a127-dd7c87a9086b";
   const schema_name = "6af30ad4-a50c-4acc-8996-d5f562b6987f";
   const daily = useDaily();
   const handleClick = async () => {
