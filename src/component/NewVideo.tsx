@@ -205,6 +205,8 @@ const RavanPremiumInterface = () => {
                 autoPlay
                 muted
                 loop
+                playsInline
+                webkit-playsinline="true"
                 className="w-full h-full object-cover"
               ></video>
             )}
