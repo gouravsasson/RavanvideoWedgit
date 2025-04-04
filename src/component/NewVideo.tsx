@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Mic, Sparkles, MicOff, Camera, CameraOff } from "lucide-react";
+import {
+  Mic,
+  Sparkles,
+  MicOff,
+  Camera,
+  CameraOff,
+  Factory,
+} from "lucide-react";
 import { useDaily } from "@daily-co/daily-react";
 import {
   DailyVideo,
@@ -11,6 +18,7 @@ import {
   useLocalSessionId,
 } from "@daily-co/daily-react";
 import axios from "axios";
+import CountryCode from "./CountryCode";
 import * as yup from "yup";
 
 // Define a validation schema
@@ -25,6 +33,7 @@ const validationSchema = yup.object().shape({
 });
 
 const RavanPremiumInterface = () => {
+  const [countryCode, setCountryCode] = useState("+1");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -40,6 +49,10 @@ const RavanPremiumInterface = () => {
     phone: "",
     organization: "",
   });
+
+  const handleCountryCode = (data) => {
+    setCountryCode(data);
+  };
 
   const meetingState = useMeetingState();
   const [isLoading, setIsLoading] = useState(false);
@@ -63,7 +76,7 @@ const RavanPremiumInterface = () => {
           schema_name: schema_name,
           name: formData.name,
           email: formData.email,
-          phone_number: formData.phone,
+          phone_number: `${countryCode}${formData.phone}`,
           industry: formData.organization,
         },
         {
@@ -416,43 +429,12 @@ const RavanPremiumInterface = () => {
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-sm font-medium text-gray-700 pl-1">
-                      Industry
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                      </div>
-                      <input
-                        type="text"
-                        name="organization"
-                        value={formData.organization}
-                        onChange={handleChange}
-                        required
-                        className="w-full bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3 pl-11 text-gray-900 transition outline-none"
-                        placeholder="Enter your industry"
-                        style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-gray-700 pl-1">
                       Phone Number
                     </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                    <div className="relative flex items-center">
+                      <CountryCode data={handleCountryCode} />
+
+                      {/* <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           className="h-5 w-5"
@@ -465,15 +447,35 @@ const RavanPremiumInterface = () => {
                         >
                           <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                         </svg>
-                      </div>
+                      </div> */}
                       <input
                         type="tel"
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
                         required
+                        className="w-full bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl rounded-l-none px-4 py-3 pl-11 text-gray-900 transition outline-none"
+                        placeholder="(555) 000-0000"
+                        style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-gray-700 pl-1">
+                      Industry
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                        <Factory className="h-5 w-5" />
+                      </div>
+                      <input
+                        type="text"
+                        name="organization"
+                        value={formData.organization}
+                        onChange={handleChange}
+                        required
                         className="w-full bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3 pl-11 text-gray-900 transition outline-none"
-                        placeholder="+1 (555) 000-0000"
+                        placeholder="Enter your industry"
                         style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
                       />
                     </div>
