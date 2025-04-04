@@ -21,10 +21,7 @@ const validationSchema = yup.object().shape({
     .string()
     .email("Invalid email format")
     .required("Email is required"),
-  phone: yup
-    .string()
-    .matches(/^\d+$/, "Phone must be a number")
-    .required("Phone is required"),
+  phone: yup.string().required("Phone is required"),
 });
 
 const RavanPremiumInterface = () => {
@@ -90,12 +87,53 @@ const RavanPremiumInterface = () => {
     setIsConnected(false);
   };
 
-  function handleAppMessage(event: any) {
+  const handleAppMessage = async (event: any) => {
     // console.log("app-message", event.data.event_type);
     if (event.data.event_type === "conversation.tool_call") {
-      console.log("function_call", event);
+      if (event.data.properties.name === "insert_in_ghl") {
+        console.log("function_call", event.data.properties);
+
+        const args = event.data.properties.arguments;
+
+        const { appointment_date } = args;
+        console.log(event.data);
+        console.log("BOOK APPOINTMENT INITIATED");
+        // const name = formData.name;
+        // const email = formData.email;
+        // const phone = formData.phone;
+        // const appointmentTime = appointment_date;
+        const agentCode = agent_code;
+
+        const url = `https://app.snowie.ai/api/agent/leadconnect/appointment/`;
+
+        const ghlResponse = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lead_name: formData.name,
+            contact_id: formData.phone,
+            agent_id: agentCode,
+            appointment_book_ts: appointment_date,
+            schema_name: schema_name,
+            // ip_address: ipAddress,
+          }),
+        });
+
+        const ghlJson = await ghlResponse.json();
+        console.log("GJHL  Response:", ghlJson);
+
+        // Return a success response with the booking and agency notification details
+        return {
+          success: ghlJson.success,
+          ghlJson: ghlJson,
+        };
+      } else {
+        // If booking fails, return error
+        console.log("Booking failed:");
+        return { error: "Failed to book the appointment" };
+      }
     }
-  }
+  };
 
   // Attach the callback
   daily?.on("app-message", handleAppMessage);
