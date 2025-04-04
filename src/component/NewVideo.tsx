@@ -192,7 +192,7 @@ const RavanPremiumInterface = () => {
                 />
                 {/* <div className="absolute bottom-[79px] rounded-full right-4 overflow-hidden"> */}
                 <DailyVideo
-                  className="absolute bottom-[90px] right-[10px] h-20 w-20 rounded-full  overflow-hidden lg:h-40 lg:w-40"
+                  className="absolute bottom-[100px] right-[10px] h-20 w-20 rounded-full  overflow-hidden lg:h-40 lg:w-40"
                   fit="cover"
                   type="video"
                   sessionId={localSessionId}
@@ -253,7 +253,7 @@ const RavanPremiumInterface = () => {
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
+                    className="md:h-5 md:w-5 h-4 w-4"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -272,7 +272,7 @@ const RavanPremiumInterface = () => {
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
+                    className="md:h-5 md:w-5 h-4 w-4"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -292,7 +292,7 @@ const RavanPremiumInterface = () => {
                   </svg>
                 </button>
 
-                <div className="flex items-center space-x-1 h-6 px-3">
+                <div className="flex items-center space-x-1 md:h-6 h-4 px-3">
                   {[...Array(5)].map((_, i) => (
                     <div
                       key={i}
