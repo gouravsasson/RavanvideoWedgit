@@ -242,7 +242,6 @@ export const countryCodes = [
 
 const CountryCode = ({ data }) => {
   const [countryCode, setCountryCode] = useState("+1");
-  console.log(countryCode);
   const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState("");
   const [filteredCountries, setFilteredCountries] = useState(countryCodes);

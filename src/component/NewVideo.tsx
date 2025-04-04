@@ -64,6 +64,7 @@ const RavanPremiumInterface = () => {
   const isMicEnabled = !localAudio.isOff;
   const agent_code = "74693076-7c01-4615-a127-dd7c87a9086b";
   const schema_name = "6af30ad4-a50c-4acc-8996-d5f562b6987f";
+  const [isGhlAppointmentInserted, setIsGhlAppointmentInserted] = useState("");
   const daily = useDaily();
   const handleClick = async () => {
     setIsLoading(true);
@@ -105,20 +106,33 @@ const RavanPremiumInterface = () => {
     setIsConnected(false);
   };
 
-  const handleAppMessage = useCallback(async (event: any) => {
-    // console.log("app-message", event.data.event_type);
+  const handleAppMessage = useCallback((event: any) => {
     if (event.data.event_type === "conversation.tool_call") {
+      console.log("tool_call", event);
+
       if (event.data.properties.name === "insert_in_ghl") {
         console.log("tool_call", event.data.properties.arguments);
         const args = JSON.parse(event.data.properties.arguments);
         const { appointment_date } = args;
+        setIsGhlAppointmentInserted(appointment_date);
         console.log("appointment_date", appointment_date);
       }
     }
   }, []);
 
-  // Attach the callback
-  daily?.on("app-message", handleAppMessage);
+  useEffect(() => {
+    if (!daily) return;
+
+    const handlerRef = handleAppMessage;
+
+    // Check if the handler is already attached
+    daily.off("app-message", handlerRef); // prevent duplicates
+    daily.on("app-message", handlerRef);
+
+    return () => {
+      daily.off("app-message", handlerRef); // clean up
+    };
+  }, [daily, handleAppMessage]);
 
   const handleResize = useCallback(
     (dimensions: { width: 1280; height: 720; aspectRatio: 1.777 }) => {
@@ -126,6 +140,47 @@ const RavanPremiumInterface = () => {
     },
     []
   );
+
+  useEffect(() => {
+    const insertGhlAppointment = async () => {
+      if (isGhlAppointmentInserted) {
+        const agentCode = agent_code;
+
+        const url = `https://app.snowie.ai/api/agent/leadconnect/appointment/`;
+
+        const ghlResponse = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            lead_name: formData.name,
+            contact_id: formData.phone,
+            agent_id: agentCode,
+            appointment_book_ts: isGhlAppointmentInserted,
+            schema_name: schema_name,
+            // ip_address: ipAddress,
+          }),
+        });
+
+        const ghlJson = await ghlResponse.json();
+        console.log("GJHL  Response:", ghlJson);
+
+        // Return a success response with the booking and agency notification details
+        return {
+          success: ghlJson.success,
+          ghlJson: ghlJson,
+        };
+      } else {
+        // If booking fails, return error
+        console.log("Booking failed:");
+        return { error: "Failed to book the appointment" };
+      }
+    };
+    insertGhlAppointment();
+  }, [isGhlAppointmentInserted]);
+
+  useEffect(() => {
+    console.log("isConnected", isConnected);
+  }, [isConnected]);
   const toggleVideo = useCallback(() => {
     daily?.setLocalVideo(!isCameraEnabled);
   }, [daily, isCameraEnabled]);
