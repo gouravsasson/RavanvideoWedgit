@@ -30,7 +30,6 @@ const RavanPremiumInterface = () => {
     phone: "",
   });
   const [isConnecting, setIsConnecting] = useState(false);
-  console.log(isConnecting);
   const [isConnected, setIsConnected] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
   const [errors, setErrors] = useState({
@@ -191,13 +190,15 @@ const RavanPremiumInterface = () => {
                   sessionId={remoteParticipantIds[0]}
                   // onResize={handleResize}
                 />
+                {/* <div className="absolute bottom-[79px] rounded-full right-4 overflow-hidden"> */}
                 <DailyVideo
-                  className="absolute bottom-[79px] right-4 aspect-video h-40 w-24 overflow-hidden  lg:h-auto lg:w-52"
-                  fit="contain"
+                  className="absolute bottom-[120px] right-[10px] h-24 w-24 rounded-full  overflow-hidden lg:h-40 lg:w-40"
+                  fit="cover"
                   type="video"
                   sessionId={localSessionId}
                   onResize={handleResize}
                 />
+                {/* </div> */}
               </div>
             ) : (
               <video
@@ -243,85 +244,85 @@ const RavanPremiumInterface = () => {
             </div>
 
             {/* Control overlay */}
-            {isConnecting && (
-              <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20">
-                <div className="flex items-center space-x-3 bg-black/20 backdrop-blur-md rounded-full px-5 py-3 shadow-lg border border-white/10">
-                  <button
-                    onClick={toggleAudio}
-                    className="text-white p-2 rounded-full hover:bg-white/20 transition"
+            {/* {isConnecting && ( */}
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20">
+              <div className="flex items-center md:space-x-3  bg-black/20 backdrop-blur-md rounded-full px-5 md:px-3  md:py-3 py-1  shadow-lg border border-white/10">
+                <button
+                  onClick={toggleAudio}
+                  className="text-white p-2 rounded-full hover:bg-white/20 transition"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                    </svg>
-                  </button>
+                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                  </svg>
+                </button>
 
-                  <button
-                    onClick={toggleVideo}
-                    className="text-white p-2 rounded-full hover:bg-white/20 transition"
+                <button
+                  onClick={toggleVideo}
+                  className="text-white p-2 rounded-full hover:bg-white/20 transition"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path d="M23 7l-7 5 7 5V7z"></path>
-                      <rect
-                        x="1"
-                        y="5"
-                        width="15"
-                        height="14"
-                        rx="2"
-                        ry="2"
-                      ></rect>
-                    </svg>
-                  </button>
+                    <path d="M23 7l-7 5 7 5V7z"></path>
+                    <rect
+                      x="1"
+                      y="5"
+                      width="15"
+                      height="14"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                  </svg>
+                </button>
 
-                  <div className="flex items-center space-x-1 h-6 px-3">
-                    {[...Array(5)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="w-1.5 rounded-full"
-                        style={{
-                          height: `${
-                            5 +
-                            (isConnected
-                              ? Math.sin((i / 5) * Math.PI) * audioLevel * 16
-                              : 0)
-                          }px`,
-                          backgroundColor: "#ff5500",
-                          transition: "height 0.1s ease-in-out",
-                          opacity: isConnected ? 1 : 0.4,
-                        }}
-                      ></div>
-                    ))}
-                  </div>
-
-                  {isConnected && (
-                    <button
-                      onClick={handleEnd}
-                      className="bg-red-500/80 hover:bg-red-600 text-white px-3 py-1.5 rounded-full text-xs font-medium transition shadow-lg"
-                    >
-                      End
-                    </button>
-                  )}
+                <div className="flex items-center space-x-1 h-6 px-3">
+                  {[...Array(5)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-1.5 rounded-full"
+                      style={{
+                        height: `${
+                          5 +
+                          (isConnected
+                            ? Math.sin((i / 5) * Math.PI) * audioLevel * 16
+                            : 0)
+                        }px`,
+                        backgroundColor: "#ff5500",
+                        transition: "height 0.1s ease-in-out",
+                        opacity: isConnected ? 1 : 0.4,
+                      }}
+                    ></div>
+                  ))}
                 </div>
+
+                {isConnected && (
+                  <button
+                    onClick={handleEnd}
+                    className="bg-red-500/80 hover:bg-red-600 text-white px-3 py-1.5 rounded-full text-xs font-medium transition shadow-lg"
+                  >
+                    End
+                  </button>
+                )}
               </div>
-            )}
+            </div>
+            {/* )} */}
           </div>
         </div>
 
