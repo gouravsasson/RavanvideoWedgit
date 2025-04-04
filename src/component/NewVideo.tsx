@@ -21,6 +21,7 @@ const validationSchema = yup.object().shape({
     .email("Invalid email format")
     .required("Email is required"),
   phone: yup.string().required("Phone is required"),
+  organization: yup.string().required("Organization is required"),
 });
 
 const RavanPremiumInterface = () => {
@@ -28,6 +29,7 @@ const RavanPremiumInterface = () => {
     name: "",
     email: "",
     phone: "",
+    organization: "",
   });
   const [isConnecting, setIsConnecting] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -36,6 +38,7 @@ const RavanPremiumInterface = () => {
     name: "",
     email: "",
     phone: "",
+    organization: "",
   });
 
   const meetingState = useMeetingState();
@@ -61,6 +64,7 @@ const RavanPremiumInterface = () => {
           name: formData.name,
           email: formData.email,
           phone_number: formData.phone,
+          industry: formData.organization,
         },
         {
           headers: {
@@ -161,7 +165,7 @@ const RavanPremiumInterface = () => {
   }, [isConnected]);
   return (
     <div
-      className={`m-4  md:h-[580px] md:max-w-6xl mx-auto overflow-hidden rounded-3xl shadow-2xl bg-[#fefbf3] ${
+      className={`m-4 h-fit  md:h-[580px] md:max-w-6xl mx-auto overflow-hidden rounded-3xl shadow-2xl bg-[#fefbf3] ${
         meetingState === "joined-meeting" ? "h-[219.38px]" : "h-[600px]"
       }`}
     >
@@ -406,6 +410,38 @@ const RavanPremiumInterface = () => {
                         required
                         className="w-full bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3 pl-11 text-gray-900 transition outline-none"
                         placeholder="john@example.com"
+                        style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-gray-700 pl-1">
+                      Industry
+                    </label>
+                    <div className="relative">
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                          <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                      </div>
+                      <input
+                        type="text"
+                        name="organization"
+                        value={formData.organization}
+                        onChange={handleChange}
+                        required
+                        className="w-full bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3 pl-11 text-gray-900 transition outline-none"
+                        placeholder="Enter your industry"
                         style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
                       />
                     </div>
