@@ -30,6 +30,7 @@ const RavanPremiumInterface = () => {
     phone: "",
   });
   const [isConnecting, setIsConnecting] = useState(false);
+  console.log(isConnecting);
   const [isConnected, setIsConnected] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
   const [errors, setErrors] = useState({
@@ -222,7 +223,7 @@ const RavanPremiumInterface = () => {
             {/* Status badge */}
             <div className="absolute top-6 left-6 z-20">
               <div
-                className={`flex items-center px-4 py-2 rounded-full shadow-lg transition-all duration-500 ${
+                className={`flex items-center  md:px-4 md:py-2 px-2 py-1 rounded-full shadow-lg transition-all duration-500 ${
                   isConnected
                     ? "bg-green-500/20 backdrop-blur-md border border-green-500/30"
                     : "bg-orange-500/20 backdrop-blur-md border border-orange-500/30"
@@ -233,14 +234,14 @@ const RavanPremiumInterface = () => {
                     isConnected ? "bg-green-500 animate-pulse" : "bg-orange-500"
                   }`}
                 ></div>
-                <span className="text-gray-800 text-sm font-medium">
+                <span className="text-gray-800 text-xs md:text-sm font-medium">
                   {isConnected ? "Live Conversation" : "Ready to Connect"}
                 </span>
               </div>
             </div>
 
             {/* Control overlay */}
-            {!isConnecting && (
+            {isConnecting && (
               <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20">
                 <div className="flex items-center space-x-3 bg-black/20 backdrop-blur-md rounded-full px-5 py-3 shadow-lg border border-white/10">
                   <button
@@ -481,7 +482,7 @@ const RavanPremiumInterface = () => {
                     <>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 mr-2"
+                        className="h-5 w-5 mr-2 hidden md:block"
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
