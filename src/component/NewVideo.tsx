@@ -90,15 +90,13 @@ const RavanPremiumInterface = () => {
     setIsConnected(false);
   };
 
-  function handleAppMessage(event) {
-    const { data } = event;
-    if (data.type === "function_call") {
-      // Handle the function call
-      // handleFunctionCall(data.name, data.arguments);
-      console.log("function_call", data.name, data.arguments);
+  function handleAppMessage(event: any) {
+    // console.log("app-message", event.data.event_type);
+    if (event.data.event_type === "conversation.tool_call") {
+      console.log("function_call", event);
     }
   }
-  
+
   // Attach the callback
   daily?.on("app-message", handleAppMessage);
 
