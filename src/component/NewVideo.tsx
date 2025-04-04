@@ -192,7 +192,7 @@ const RavanPremiumInterface = () => {
                 />
                 {/* <div className="absolute bottom-[79px] rounded-full right-4 overflow-hidden"> */}
                 <DailyVideo
-                  className="absolute bottom-[120px] right-[10px] h-24 w-24 rounded-full  overflow-hidden lg:h-40 lg:w-40"
+                  className="absolute bottom-[90px] right-[10px] h-20 w-20 rounded-full  overflow-hidden lg:h-40 lg:w-40"
                   fit="cover"
                   type="video"
                   sessionId={localSessionId}
