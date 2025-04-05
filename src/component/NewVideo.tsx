@@ -240,7 +240,7 @@ const RavanPremiumInterface = () => {
       <div className=" md:flex w-full h-full">
         {/* Avatar Video Side - Expands to full width when connected */}
         <div
-          className={` relative z-10 transition-all duration-700 ease-in-out  ${
+          className={` relative transition-all duration-700 ease-in-out  ${
             isConnected ? "md:w-full" : "md:w-2/3"
           }`}
           style={{
@@ -317,7 +317,7 @@ const RavanPremiumInterface = () => {
 
             {/* Control overlay */}
             {/* {isConnecting && ( */}
-            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20">
+            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 ">
               <div className="flex items-center md:space-x-3  bg-black/20 backdrop-blur-md rounded-full px-5 md:px-3  md:py-3 py-1  shadow-lg border border-white/10">
                 <button
                   onClick={toggleAudio}
