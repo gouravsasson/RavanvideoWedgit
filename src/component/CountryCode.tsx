@@ -276,25 +276,25 @@ const CountryCode = ({ data, defaultCode = "+91" }) => {
   };
 
   return (
-    <div className="relative w-full max-w-sm" ref={dropdownRef}>
+    <div className="relative w-full max-w-sm text-black" ref={dropdownRef}>
       {/* Selected value */}
       <div
         onClick={() => setIsOpen((prev) => !prev)}
-        className="cursor-pointer bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3 text-gray-900 flex items-center justify-between"
+        className=" text-black cursor-pointer bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3  flex items-center justify-between"
       >
         <span>{countryCode}</span>
-        <ChevronsUpDown className="h-4 w-4 text-gray-500" />
+        <ChevronsUpDown className="h-4 w-4  text-black" />
       </div>
 
       {/* Dropdown with search + options */}
       {isOpen && (
-        <div className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-72 overflow-auto">
+        <div className="absolute z-50 mt-2 w-full text-black bg-white border border-gray-200 rounded-xl shadow-lg max-h-72 overflow-auto">
           {/* Search box inside dropdown */}
-          <div className="p-2 sticky top-0 bg-white border-b border-gray-100">
+          <div className="p-2 sticky top-0 bg-white border-b border-gray-100 text-black">
             <input
               type="text"
               placeholder="Search country"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-orange-200"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 text-black focus:ring-orange-200"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               autoFocus
@@ -302,18 +302,18 @@ const CountryCode = ({ data, defaultCode = "+91" }) => {
           </div>
 
           {/* Country options */}
-          <ul className="max-h-60 overflow-y-auto">
+          <ul className="max-h-60 overflow-y-auto text-black">
             {filteredCountries.map((country) => (
               <li
                 key={country.code + country.name}
-                className="px-4 py-2 hover:bg-orange-100 cursor-pointer"
+                className="px-4 py-2 hover:bg-orange-100 cursor-pointer text-black"
                 onClick={() => handleSelect(country.code)}
               >
                 {country.name} ({country.code})
               </li>
             ))}
             {filteredCountries.length === 0 && (
-              <li className="px-4 py-2 text-gray-500">No results found</li>
+              <li className="px-4 py-2 text-black">No results found</li>
             )}
           </ul>
         </div>
