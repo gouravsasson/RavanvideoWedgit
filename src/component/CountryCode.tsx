@@ -277,7 +277,10 @@ const CountryCode = ({ data, defaultCode = "+91" }) => {
   };
 
   return (
-    <div className="relative w-full max-w-sm text-black" ref={dropdownRef}>
+    <div
+      className="relative h-[50px] w-full max-w-sm text-black"
+      ref={dropdownRef}
+    >
       {/* Selected value */}
       <div
         onClick={() => setIsOpen((prev) => !prev)}
