@@ -258,8 +258,8 @@ const CountryCode = ({ data, defaultCode = "+91" }) => {
         setIsOpen(false);
       }
     };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("click", handleClickOutside); // changed from "mousedown"
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -270,6 +270,7 @@ const CountryCode = ({ data, defaultCode = "+91" }) => {
   }, [searchTerm]);
 
   const handleSelect = (code) => {
+    console.log("code", code);
     setCountryCode(code);
     setIsOpen(false);
     setSearchTerm("");
