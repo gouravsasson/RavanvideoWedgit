@@ -240,37 +240,85 @@ export const countryCodes = [
   { code: "+263", name: "Zimbabwe" },
 ];
 
-const CountryCode = ({ data, defaultCode = "+1" }) => {
+const CountryCode = ({ data, defaultCode = "+91" }) => {
   const [countryCode, setCountryCode] = useState(defaultCode);
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredCountries, setFilteredCountries] = useState(countryCodes);
 
-  // Send selected code back to parent
+  const dropdownRef = useRef(null);
+
   useEffect(() => {
     data(countryCode);
   }, [countryCode, data]);
 
-  // Handle user selection
-  const handleCountrySelect = (country) => {
-    setCountryCode(country.code);
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    const filtered = countryCodes.filter((c) =>
+      c.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredCountries(filtered);
+  }, [searchTerm]);
+
+  const handleSelect = (code) => {
+    setCountryCode(code);
+    setIsOpen(false);
+    setSearchTerm("");
   };
 
   return (
-    <select
-      value={countryCode}
-      onChange={(e) => {
-        const selectedCode = e.target.value;
-        const selectedCountry = countryCodes.find(
-          (c) => c.code === selectedCode
-        );
-        if (selectedCountry) handleCountrySelect(selectedCountry);
-      }}
-      className="w-full rounded-r-none bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3 text-gray-900 transition outline-none"
-    >
-      {countryCodes.map((country) => (
-        <option key={country.code} value={country.code}>
-          {country.name} ({country.code})
-        </option>
-      ))}
-    </select>
+    <div className="relative w-full max-w-sm" ref={dropdownRef}>
+      {/* Selected value */}
+      <div
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="cursor-pointer bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3 text-gray-900 flex items-center justify-between"
+      >
+        <span>{countryCode}</span>
+        <ChevronsUpDown className="h-4 w-4 text-gray-500" />
+      </div>
+
+      {/* Dropdown with search + options */}
+      {isOpen && (
+        <div className="absolute z-50 mt-2 w-full bg-white border border-gray-200 rounded-xl shadow-lg max-h-72 overflow-auto">
+          {/* Search box inside dropdown */}
+          <div className="p-2 sticky top-0 bg-white border-b border-gray-100">
+            <input
+              type="text"
+              placeholder="Search country"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-orange-200"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              autoFocus
+            />
+          </div>
+
+          {/* Country options */}
+          <ul className="max-h-60 overflow-y-auto">
+            {filteredCountries.map((country) => (
+              <li
+                key={country.code + country.name}
+                className="px-4 py-2 hover:bg-orange-100 cursor-pointer"
+                onClick={() => handleSelect(country.code)}
+              >
+                {country.name} ({country.code})
+              </li>
+            ))}
+            {filteredCountries.length === 0 && (
+              <li className="px-4 py-2 text-gray-500">No results found</li>
+            )}
+          </ul>
+        </div>
+      )}
+    </div>
   );
 };
 
