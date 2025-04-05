@@ -324,6 +324,7 @@ const RavanPremiumInterface = () => {
             <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 ">
               <div className="flex items-center md:space-x-3  bg-black/20 backdrop-blur-md rounded-full px-5 md:px-3  md:py-3 py-1  shadow-lg border border-white/10">
                 <button
+                  type="button"
                   onClick={toggleAudio}
                   className="text-white p-2 rounded-full hover:bg-white/20 transition"
                 >
@@ -343,6 +344,7 @@ const RavanPremiumInterface = () => {
                 </button>
 
                 <button
+                  type="button"
                   onClick={toggleVideo}
                   className="text-white p-2 rounded-full hover:bg-white/20 transition"
                 >
@@ -390,6 +392,7 @@ const RavanPremiumInterface = () => {
 
                 {isConnected && (
                   <button
+                    type="button"
                     onClick={handleEnd}
                     className="bg-red-500/80 hover:bg-red-600 text-white px-3 py-1.5 rounded-full text-xs font-medium transition shadow-lg"
                   >
@@ -597,67 +600,11 @@ const RavanPremiumInterface = () => {
                   )}
                 </button>
               </form>
-
-              {/* This button is just for demo purposes - you can remove it in production */}
-              {/* <div className="absolute bottom-3 right-3 text-xs text-gray-400">
-                <button
-                  onClick={forceConnect}
-                  className="underline hover:text-gray-600"
-                >
-                  Force connect (demo)
-                </button>
-              </div> */}
             </div>
           </div>
         )}
       </div>
-      {/* Connected overlay - Only visible when connected */}
-      {/* {isConnected && ( */}
-      {/* // <div className="absolute bottom-20 left-0 right-0 flex justify-center z-20 animate-fadeIn"> */}
-      {/* //   <div className="bg-white/20 backdrop-blur-lg text-gray-800 px-6 py-3 rounded-full shadow-lg border border-white/30 flex items-center space-x-3"> */}
-      {/* //     <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div> */}
-
-      {/* <span className="font-medium">Connected with {formData.name}</span> */}
-      {/* //     <span className="h-3 w-px bg-gray-400/30"></span> */}
-      {/* //     <span className="text-xs text-gray-600">00:08</span> */}
-      {/* //   </div> */}
-      {/* // </div> */}
-      {/* // )} */}
-      {/* Animation of success circle when connecting */}
-      {/* {isConnecting && (
-        <div className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none">
-          <div className="relative">
-            <div
-              className="absolute inset-0 rounded-full animate-ping"
-              style={{
-                backgroundColor: "rgba(255, 85, 0, 0.2)",
-              }}
-            ></div>
-            <div className="relative rounded-full p-8 bg-white/80 backdrop-blur-lg shadow-xl">
-              <svg
-                className="animate-spin h-8 w-8"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="#ff5500"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="#ff5500"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-      )} */}
+      
       <DailyAudio />
     </div>
   );
