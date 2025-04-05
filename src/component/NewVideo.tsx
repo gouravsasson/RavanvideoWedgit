@@ -30,7 +30,7 @@ const validationSchema = yup.object().shape({
     .string()
     .email("Invalid email format")
     .required("Email is required"),
-  // phone: yup.string().required("Phone is required"),
+  phone: yup.string().required("Phone is required"),
   organization: yup.string().required("Organization is required"),
 });
 
@@ -81,7 +81,7 @@ const RavanPremiumInterface = () => {
           schema_name: schema_name,
           name: formData.name,
           email: formData.email,
-          phone_number: `+${phone}`,
+          phone_number: `${countryCode}${formData.phone}`,
           industry: formData.organization,
         },
         {
@@ -157,7 +157,7 @@ const RavanPremiumInterface = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             lead_name: formData.name,
-            contact_id: phone,
+            contact_id: `${countryCode}${formData.phone}`,
             agent_id: agentCode,
             appointment_book_ts: isGhlAppointmentInserted,
             schema_name: schema_name,
@@ -324,7 +324,6 @@ const RavanPremiumInterface = () => {
             <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 ">
               <div className="flex items-center md:space-x-3  bg-black/20 backdrop-blur-md rounded-full px-5 md:px-3  md:py-3 py-1  shadow-lg border border-white/10">
                 <button
-                  type="button"
                   onClick={toggleAudio}
                   className="text-white p-2 rounded-full hover:bg-white/20 transition"
                 >
@@ -342,10 +341,8 @@ const RavanPremiumInterface = () => {
                     <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
                   </svg>
                 </button>
-                <CountryCode data={handleCountryCode} />
 
                 <button
-                  type="button"
                   onClick={toggleVideo}
                   className="text-white p-2 rounded-full hover:bg-white/20 transition"
                 >
@@ -393,7 +390,6 @@ const RavanPremiumInterface = () => {
 
                 {isConnected && (
                   <button
-                    type="button"
                     onClick={handleEnd}
                     className="bg-red-500/80 hover:bg-red-600 text-white px-3 py-1.5 rounded-full text-xs font-medium transition shadow-lg"
                   >
@@ -494,23 +490,23 @@ const RavanPremiumInterface = () => {
                     <label className="text-sm font-medium text-gray-700 pl-1">
                       Phone Number
                     </label>
-                    <PhoneInput
-                      containerClass="w-[364px]"
-                      inputClass="!w-full"
-                      buttonClass="!border-none"
-                      dropdownClass="!text-black"
-                      country={"eg"}
-                      enableSearch={true}
-                      value={phone}
-                      onChange={(phone) => setPhone(phone)}
-                    />
-                  </div>
-                  {/* <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-gray-700 pl-1">
-                      Phone Number
-                    </label>
                     <div className="relative flex items-center">
                       <CountryCode data={handleCountryCode} />
+
+                      {/* <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                      </div> */}
                       <input
                         type="tel"
                         name="phone"
@@ -522,7 +518,7 @@ const RavanPremiumInterface = () => {
                         style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
                       />
                     </div>
-                  </div> */}
+                  </div>
                   <div className="space-y-1.5">
                     <label className="text-sm font-medium text-gray-700 pl-1">
                       Industry
@@ -601,11 +597,67 @@ const RavanPremiumInterface = () => {
                   )}
                 </button>
               </form>
+
+              {/* This button is just for demo purposes - you can remove it in production */}
+              {/* <div className="absolute bottom-3 right-3 text-xs text-gray-400">
+                <button
+                  onClick={forceConnect}
+                  className="underline hover:text-gray-600"
+                >
+                  Force connect (demo)
+                </button>
+              </div> */}
             </div>
           </div>
         )}
       </div>
+      {/* Connected overlay - Only visible when connected */}
+      {/* {isConnected && ( */}
+      {/* // <div className="absolute bottom-20 left-0 right-0 flex justify-center z-20 animate-fadeIn"> */}
+      {/* //   <div className="bg-white/20 backdrop-blur-lg text-gray-800 px-6 py-3 rounded-full shadow-lg border border-white/30 flex items-center space-x-3"> */}
+      {/* //     <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></div> */}
 
+      {/* <span className="font-medium">Connected with {formData.name}</span> */}
+      {/* //     <span className="h-3 w-px bg-gray-400/30"></span> */}
+      {/* //     <span className="text-xs text-gray-600">00:08</span> */}
+      {/* //   </div> */}
+      {/* // </div> */}
+      {/* // )} */}
+      {/* Animation of success circle when connecting */}
+      {/* {isConnecting && (
+        <div className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none">
+          <div className="relative">
+            <div
+              className="absolute inset-0 rounded-full animate-ping"
+              style={{
+                backgroundColor: "rgba(255, 85, 0, 0.2)",
+              }}
+            ></div>
+            <div className="relative rounded-full p-8 bg-white/80 backdrop-blur-lg shadow-xl">
+              <svg
+                className="animate-spin h-8 w-8"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="#ff5500"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="#ff5500"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+      )} */}
       <DailyAudio />
     </div>
   );
