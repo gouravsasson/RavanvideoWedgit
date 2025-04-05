@@ -324,6 +324,7 @@ const RavanPremiumInterface = () => {
             <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 ">
               <div className="flex items-center md:space-x-3  bg-black/20 backdrop-blur-md rounded-full px-5 md:px-3  md:py-3 py-1  shadow-lg border border-white/10">
                 <button
+                  type="button"
                   onClick={toggleAudio}
                   className="text-white p-2 rounded-full hover:bg-white/20 transition"
                 >
@@ -341,8 +342,10 @@ const RavanPremiumInterface = () => {
                     <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
                   </svg>
                 </button>
+                <CountryCode data={handleCountryCode} />
 
                 <button
+                  type="button"
                   onClick={toggleVideo}
                   className="text-white p-2 rounded-full hover:bg-white/20 transition"
                 >
@@ -390,6 +393,7 @@ const RavanPremiumInterface = () => {
 
                 {isConnected && (
                   <button
+                    type="button"
                     onClick={handleEnd}
                     className="bg-red-500/80 hover:bg-red-600 text-white px-3 py-1.5 rounded-full text-xs font-medium transition shadow-lg"
                   >

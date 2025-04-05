@@ -276,48 +276,55 @@ const CountryCode = ({ data }) => {
   };
 
   return (
-    <div ref={dropdownRef} className="relative">
-      <button
-        type="button"
-        onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
-        className="  w-24 h-[50px] px-3 py-2.5 rounded-l-xl border border-r-0 border-gray-200 bg-white/50 backdrop-blur-sm text-sm text-gray-600 hover:border-gray-300 flex items-center justify-between z-50"
-      >
-        {countryCode}
-        <ChevronsUpDown className="h-4 w-4 opacity-50" />
-      </button>
+    // <div ref={dropdownRef} className="relative">
+    //   <button
+    //     type="button"
+    //     onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
+    //     className="  w-24 h-[50px] px-3 py-2.5 rounded-l-xl border border-r-0 border-gray-200 bg-white/50 backdrop-blur-sm text-sm text-gray-600 hover:border-gray-300 flex items-center justify-between z-50"
+    //   >
+    //     {countryCode}
+    //     <ChevronsUpDown className="h-4 w-4 opacity-50" />
+    //   </button>
 
-      {isCountryDropdownOpen && (
-        <div className="absolute bottom-16 z-50 w-64 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-64 overflow-y-auto">
-          <input
-            type="text"
-            value={countrySearch}
-            onChange={(e) => setCountrySearch(e.target.value)}
-            placeholder="Search country or code..."
-            className="w-full px-3 py-2 border-b border-gray-200 text-sm focus:outline-none sticky top-0 bg-white"
-            onClick={(e) => e.stopPropagation()}
-          />
-          <div className="p-1">
-            {filteredCountries.length > 0 ? (
-              filteredCountries.map((country) => (
-                <button
-                  type="button"
-                  key={`${country.code}-${country.name}`}
-                  onClick={() => handleCountrySelect(country)}
-                  className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-lg flex justify-between items-center"
-                >
-                  <span>{country.name}</span>
-                  <span className="text-gray-500">{country.code}</span>
-                </button>
-              ))
-            ) : (
-              <div className="px-3 py-2 text-sm text-gray-500">
-                No countries found
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+    //   {isCountryDropdownOpen && (
+    //     <div className="absolute bottom-16 z-50 w-64 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-64 overflow-y-auto">
+    //       <input
+    //         type="text"
+    //         value={countrySearch}
+    //         onChange={(e) => setCountrySearch(e.target.value)}
+    //         placeholder="Search country or code..."
+    //         className="w-full px-3 py-2 border-b border-gray-200 text-sm focus:outline-none sticky top-0 bg-white"
+    //         onClick={(e) => e.stopPropagation()}
+    //       />
+    //       <div className="p-1">
+    //         {filteredCountries.length > 0 ? (
+    //           filteredCountries.map((country) => (
+    //             <button
+    //               type="button"
+    //               key={`${country.code}-${country.name}`}
+    //               onClick={() => handleCountrySelect(country)}
+    //               className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-lg flex justify-between items-center"
+    //             >
+    //               <span>{country.name}</span>
+    //               <span className="text-gray-500">{country.code}</span>
+    //             </button>
+    //           ))
+    //         ) : (
+    //           <div className="px-3 py-2 text-sm text-gray-500">
+    //             No countries found
+    //           </div>
+    //         )}
+    //       </div>
+    //     </div>
+    //   )}
+    // </div>
+    <select className="w-full bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3 pl-11 text-gray-900 transition outline-none">
+      {countryCodes.map((country) => (
+        <option key={country.code} value={country.code}>
+          {country.name}
+        </option>
+      ))}
+    </select>
   );
 };
 
