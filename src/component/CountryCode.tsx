@@ -278,6 +278,7 @@ const CountryCode = ({ data }) => {
   return (
     <div ref={dropdownRef} className="relative">
       <button
+        type="button"
         onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
         className="  w-24 h-[50px] px-3 py-2.5 rounded-l-xl border border-r-0 border-gray-200 bg-white/50 backdrop-blur-sm text-sm text-gray-600 hover:border-gray-300 flex items-center justify-between z-50"
       >
@@ -299,6 +300,7 @@ const CountryCode = ({ data }) => {
             {filteredCountries.length > 0 ? (
               filteredCountries.map((country) => (
                 <button
+                  type="button"
                   key={`${country.code}-${country.name}`}
                   onClick={() => handleCountrySelect(country)}
                   className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded-lg flex justify-between items-center"
