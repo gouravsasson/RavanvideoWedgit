@@ -252,7 +252,7 @@ const CountryCode = ({ data }) => {
 
   const dropdownRef = useRef(null);
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsCountryDropdownOpen(false);
       }
