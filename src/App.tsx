@@ -1,9 +1,11 @@
 import { DailyProvider, useCallObject } from "@daily-co/daily-react";
 import { useEffect } from "react";
 import { createStore, Provider } from "jotai";
-import Video from "./component/Video";
 import NewVideo from "./component/NewVideo";
+import NewVideoForDanub from "./component/NewVideoForDanub";
+import { useWidgetContext } from "./component/constexts/WidgetContext";
 function App() {
+  const { type } = useWidgetContext();
   // useEffect(() => {
   //   const disableContextMenu = (event: MouseEvent) => event.preventDefault();
   //   const disableKeys = (event: KeyboardEvent) => {
@@ -32,8 +34,7 @@ function App() {
   return (
     <Provider store={jotaiStore}>
       <DailyProvider callObject={callObject} jotaiStore={jotaiStore}>
-        {/* <Video /> */}
-        <NewVideo />
+        {type === "danube" ? <NewVideoForDanub /> : <NewVideo />}
       </DailyProvider>
     </Provider>
   );

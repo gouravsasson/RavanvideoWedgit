@@ -277,11 +277,11 @@ const CountryCode = ({ data, defaultCode = "+91" }) => {
   };
 
   return (
-    <div className="relative  w-full max-w-sm text-black" ref={dropdownRef}>
+    <div className="relative  w-full max-w-sm text-black " ref={dropdownRef}>
       {/* Selected value */}
       <div
         onClick={() => setIsOpen((prev) => !prev)}
-        className=" text-black h-[50px] cursor-pointer rounded-r-none bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3  flex items-center justify-between"
+        className=" text-black h-[50px] w-[100px] cursor-pointer rounded-r-none bg-white backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3  flex items-center justify-between"
       >
         <span>{countryCode}</span>
         <ChevronsUpDown className="h-4 w-4  text-black" />
