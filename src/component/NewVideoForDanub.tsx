@@ -497,27 +497,7 @@ const NewVideoForDanub = () => {
                         style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
                       />
                     </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-[#e8361c] pl-1">
-                      Industry
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-black z-10">
-                        <Factory className="h-5 w-5" />
-                      </div>
-                      <input
-                        type="text"
-                        name="organization"
-                        value={formData.organization}
-                        onChange={handleChange}
-                        required
-                        className="w-full bg-white backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3 pl-11 text-gray-900 transition outline-none"
-                        placeholder="Enter your industry"
-                        style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
-                      />
-                    </div>
-                  </div>
+                  
                 </div>
 
                 <button
@@ -526,7 +506,7 @@ const NewVideoForDanub = () => {
                   className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-xl text-white font-medium text-lg transition-all shadow-lg"
                   style={{
                     background: isConnecting
-                      ? "#ccc"
+                      ? "#e8361c"
                       : "linear-gradient(90deg, #ff5500 0%, #ff7e38 100%)",
                     boxShadow: isConnecting
                       ? "none"
