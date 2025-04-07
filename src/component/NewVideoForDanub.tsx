@@ -489,7 +489,7 @@ const NewVideoForDanub = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         required
-                        className="h-[50px] w-[236px]  bg-white backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl rounded-l-none px-4 py-3 pl-11 text-gray-900 transition outline-none"
+                        className="h-[50px] w-[216px] md:w-[236px]  bg-white backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl rounded-l-none px-4 py-3 pl-11 text-gray-900 transition outline-none"
                         placeholder="(555) 000-0000"
                         style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
                       />
