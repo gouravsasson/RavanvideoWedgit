@@ -24,6 +24,7 @@ import { useWidgetContext } from "./constexts/WidgetContext";
 import * as yup from "yup";
 import "react-phone-input-2/lib/bootstrap.css";
 import video from "../assets/video.mp4";
+import video2 from "../assets/video-VEED.mp4";
 
 // Define a validation schema
 const validationSchema = yup.object().shape({
@@ -282,7 +283,7 @@ const NewVideoForDanub = () => {
               </div>
             ) : (
               <video
-                src={video}
+                src={video2}
                 autoPlay
                 muted
                 loop
