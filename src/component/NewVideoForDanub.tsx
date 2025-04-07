@@ -249,7 +249,7 @@ const NewVideoForDanub = () => {
       <div className=" md:flex w-full h-full">
         {/* Avatar Video Side - Expands to full width when connected */}
         <div
-          className={` relative transition-all duration-700 ease-in-out  ${
+          className={` relative transition-all duration-700 ease-in-out  bg-[#fefbf3] ${
             isConnected ? "md:w-full" : "md:w-2/3"
           }`}
           style={{
@@ -257,8 +257,6 @@ const NewVideoForDanub = () => {
           }}
         >
           <div className="w-full h-full">
-            {/* Avatar Video */}
-
             {meetingState === "joined-meeting" ? (
               <div>
                 <DailyVideo
@@ -269,9 +267,7 @@ const NewVideoForDanub = () => {
                   fit="contain"
                   type="video"
                   sessionId={remoteParticipantIds[0]}
-                  // onResize={handleResize}
                 />
-                {/* <div className="absolute bottom-[79px] rounded-full right-4 overflow-hidden"> */}
                 <DailyVideo
                   className="absolute bottom-[100px] right-[10px] h-20 w-20 rounded-full  overflow-hidden lg:h-40 lg:w-40"
                   fit="cover"
@@ -279,13 +275,12 @@ const NewVideoForDanub = () => {
                   sessionId={localSessionId}
                   onResize={handleResize}
                 />
-                {/* </div> */}
               </div>
             ) : (
               <video
                 src={video2}
                 autoPlay
-                muted
+                // muted
                 loop
                 playsInline
                 webkit-playsinline="true"
@@ -413,7 +408,7 @@ const NewVideoForDanub = () => {
         {/* Form Side - Only visible when not connected */}
         {!isConnected && (
           <div
-            className=" md-w-[500px] flex flex-col justify-center p-8 z-10 bg-black backdrop-blur-sm rounded-r-3xl transition-all duration-700 ease-in-out"
+            className=" md-w-[500px]  flex flex-col justify-center p-8 z-10 bg-black backdrop-blur-sm md:rounded-r-3xl transition-all duration-700 ease-in-out"
             // style={{
             //   boxShadow: "inset 0 0 20px rgba(255, 255, 255, 0.5)",
             //   border: "1px solid rgba(255, 255, 255, 0.3)",
