@@ -5,7 +5,7 @@ import NewVideo from "./component/NewVideo";
 import NewVideoForDanub from "./component/NewVideoForDanub";
 import { useWidgetContext } from "./component/constexts/WidgetContext";
 function App() {
-  const { type } = useWidgetContext();
+  // const { type } = useWidgetContext();
   // useEffect(() => {
   //   const disableContextMenu = (event: MouseEvent) => event.preventDefault();
   //   const disableKeys = (event: KeyboardEvent) => {
@@ -34,7 +34,8 @@ function App() {
   return (
     <Provider store={jotaiStore}>
       <DailyProvider callObject={callObject} jotaiStore={jotaiStore}>
-        {type === "danube" ? <NewVideoForDanub /> : <NewVideo />}
+        {/* {type === "danube" ? <NewVideoForDanub /> : <NewVideo />} */}
+        <NewVideoForDanub />
       </DailyProvider>
     </Provider>
   );

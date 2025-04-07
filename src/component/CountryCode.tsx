@@ -240,7 +240,7 @@ export const countryCodes = [
   { code: "+263", name: "Zimbabwe" },
 ];
 
-const CountryCode = ({ data, defaultCode = "+91" }) => {
+const CountryCode = ({ data, defaultCode = "+1" }) => {
   const [countryCode, setCountryCode] = useState(defaultCode);
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -252,15 +252,16 @@ const CountryCode = ({ data, defaultCode = "+91" }) => {
     data(countryCode);
   }, [countryCode, data]);
 
-  // useEffect(() => {
-  //   const handleClickOutside = (e: MouseEvent) => {
-  //     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-  //       setIsOpen(false);
-  //     }
-  //   };
-  //   document.addEventListener("mousedown", handleClickOutside);
-  //   return () => document.removeEventListener("mousedown", handleClickOutside);
-  // }, []);
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      e.preventDefault();
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const filtered = countryCodes.filter((c) =>
@@ -277,11 +278,14 @@ const CountryCode = ({ data, defaultCode = "+91" }) => {
   };
 
   return (
-    <div className="relative  w-full max-w-sm text-black " ref={dropdownRef}>
+    <div
+      className="relative w-full max-w-sm text-black z-50 "
+      ref={dropdownRef}
+    >
       {/* Selected value */}
       <div
         onClick={() => setIsOpen((prev) => !prev)}
-        className=" text-black h-[50px] w-[100px] cursor-pointer rounded-r-none bg-white backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3  flex items-center justify-between"
+        className=" text-black h-[50px] w-[130px]  cursor-pointer rounded-r-none bg-white backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3  flex items-center justify-between"
       >
         <span>{countryCode}</span>
         <ChevronsUpDown className="h-4 w-4  text-black" />
@@ -289,7 +293,7 @@ const CountryCode = ({ data, defaultCode = "+91" }) => {
 
       {/* Dropdown with search + options */}
       {isOpen && (
-        <div className="absolute z-50 mt-2 w-full text-black bg-white border border-gray-200 rounded-xl shadow-lg max-h-72 overflow-auto">
+        <div className="absolute z-50 bottom-0 w-full text-black bg-white border border-gray-200 rounded-xl shadow-lg max-h-72 overflow-auto">
           {/* Search box inside dropdown */}
           <div className="p-2 sticky top-0 bg-white border-b border-gray-100 text-black">
             <input

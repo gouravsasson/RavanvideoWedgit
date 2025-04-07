@@ -23,6 +23,7 @@ import CountryCode from "./CountryCode";
 import { useWidgetContext } from "./constexts/WidgetContext";
 import * as yup from "yup";
 import "react-phone-input-2/lib/bootstrap.css";
+import video from "../assets/video.mp4";
 
 // Define a validation schema
 const validationSchema = yup.object().shape({
@@ -281,7 +282,7 @@ const NewVideoForDanub = () => {
               </div>
             ) : (
               <video
-                src="https://cdn.prod.website-files.com/63b2f566abde4cad39ba419f%2F67b5222642c2133d9163ce80_newmike-transcode.mp4"
+                src={video}
                 autoPlay
                 muted
                 loop
@@ -492,7 +493,7 @@ const NewVideoForDanub = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         required
-                        className="h-[50px] bg-white backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl rounded-l-none px-4 py-3 pl-11 text-gray-900 transition outline-none"
+                        className="h-[50px] w-[236px]  bg-white backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl rounded-l-none px-4 py-3 pl-11 text-gray-900 transition outline-none"
                         placeholder="(555) 000-0000"
                         style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
                       />
@@ -503,7 +504,7 @@ const NewVideoForDanub = () => {
                 <button
                   type="submit"
                   disabled={isConnecting}
-                  className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-xl text-white font-medium text-lg transition-all shadow-lg"
+                  className="flex items-center w-full justify-center space-x-2 py-3.5 px-6 rounded-xl text-white font-medium text-lg transition-all shadow-lg"
                   style={{
                     background: isConnecting
                       ? "#e8361c"
@@ -561,8 +562,8 @@ const NewVideoForDanub = () => {
         )}
       </div>
 
-<DailyAudio />
-  </div>
+      <DailyAudio />
+    </div>
   );
 };
 
