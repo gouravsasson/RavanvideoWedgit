@@ -280,7 +280,7 @@ const NewVideoForDanub = () => {
               <video
                 src={video2}
                 autoPlay
-                // muted
+                muted
                 loop
                 playsInline
                 webkit-playsinline="true"
