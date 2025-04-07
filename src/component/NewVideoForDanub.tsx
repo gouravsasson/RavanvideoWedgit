@@ -32,7 +32,7 @@ const validationSchema = yup.object().shape({
     .email("Invalid email format")
     .required("Email is required"),
   phone: yup.string().required("Phone is required"),
-  organization: yup.string().required("Organization is required"),
+  // organization: yup.string().required("Organization is required"),
 });
 
 const NewVideoForDanub = () => {
@@ -497,7 +497,7 @@ const NewVideoForDanub = () => {
                         style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
                       />
                     </div>
-                  
+                  </div>
                 </div>
 
                 <button
@@ -561,8 +561,8 @@ const NewVideoForDanub = () => {
         )}
       </div>
 
-      <DailyAudio />
-    </div>
+<DailyAudio />
+  </div>
   );
 };
 
