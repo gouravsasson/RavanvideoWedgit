@@ -24,7 +24,7 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
 import video2 from "../assets/video-VEED.mp4";
 import fallback from "../assets/fallback.png";
-
+import { useWidgetContext } from "./constexts/WidgetContext";
 // Define a validation schema
 const validationSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -38,6 +38,7 @@ const validationSchema = yup.object().shape({
 
 const RavanPremiumInterface = () => {
   const [phone, setPhone] = useState("");
+  const { agent_id, schema } = useWidgetContext();
 
   const [countryCode, setCountryCode] = useState("+1");
   const [formData, setFormData] = useState({
@@ -68,8 +69,10 @@ const RavanPremiumInterface = () => {
   const localAudio = useAudioTrack(localSessionId);
   const isCameraEnabled = !localVideo.isOff;
   const isMicEnabled = !localAudio.isOff;
-  const agent_code = "74693076-7c01-4615-a127-dd7c87a9086b";
-  const schema_name = "6af30ad4-a50c-4acc-8996-d5f562b6987f";
+  // const agent_code = "74693076-7c01-4615-a127-dd7c87a9086b";
+  // const schema_name = "6af30ad4-a50c-4acc-8996-d5f562b6987f";
+  const agent_code = agent_id;
+  const schema_name = schema;
   const [isGhlAppointmentInserted, setIsGhlAppointmentInserted] = useState("");
   const daily = useDaily();
 
