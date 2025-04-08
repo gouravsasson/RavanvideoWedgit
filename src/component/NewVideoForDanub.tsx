@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   User,
   Mic,
+  MicOff,
   Sparkles,
   MicOff,
   Camera,
@@ -17,6 +18,7 @@ import {
   useAudioTrack,
   useVideoTrack,
   useLocalSessionId,
+  useMediaTrack,
 } from "@daily-co/daily-react";
 import axios from "axios";
 import CountryCode from "./CountryCode";
@@ -75,6 +77,8 @@ const NewVideoForDanub = () => {
   const schema_name = schema;
   const [isGhlAppointmentInserted, setIsGhlAppointmentInserted] = useState("");
   const daily = useDaily();
+  const isUresmuted = useMediaTrack(localSessionId, "audio");
+  console.log("isUresmuted", isUresmuted.isOff);
   const handleClick = async () => {
     setIsLoading(true);
     try {
@@ -328,19 +332,11 @@ const NewVideoForDanub = () => {
                   onClick={toggleAudio}
                   className="text-white p-2 rounded-full hover:bg-white/20 transition"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="md:h-5 md:w-5 h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                  </svg>
+                  {isUresmuted.isOff ? (
+                    <MicOff className="h-5 w-5" />
+                  ) : (
+                    <Mic className="h-5 w-5" />
+                  )}
                 </button>
 
                 <button
