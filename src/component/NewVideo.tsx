@@ -22,6 +22,7 @@ import CountryCode from "./CountryCode";
 import * as yup from "yup";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/bootstrap.css";
+import video2 from "../assets/video-VEED.mp4";
 
 // Define a validation schema
 const validationSchema = yup.object().shape({
@@ -278,7 +279,7 @@ const RavanPremiumInterface = () => {
               </div>
             ) : (
               <video
-                src="https://cdn.prod.website-files.com/63b2f566abde4cad39ba419f%2F67b5222642c2133d9163ce80_newmike-transcode.mp4"
+                src={video2}
                 autoPlay
                 muted
                 loop
@@ -516,7 +517,7 @@ const RavanPremiumInterface = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         required
-                        className="w-full h-[50px] bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl rounded-l-none px-4 py-3 pl-11 text-gray-900 transition outline-none"
+                        className="h-[50px] w-[216px] md:w-[236px] bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl rounded-l-none px-4 py-3 pl-11 text-gray-900 transition outline-none"
                         placeholder="(555) 000-0000"
                         style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
                       />
@@ -604,7 +605,7 @@ const RavanPremiumInterface = () => {
           </div>
         )}
       </div>
-      
+
       <DailyAudio />
     </div>
   );
