@@ -71,6 +71,23 @@ const RavanPremiumInterface = () => {
   const schema_name = "6af30ad4-a50c-4acc-8996-d5f562b6987f";
   const [isGhlAppointmentInserted, setIsGhlAppointmentInserted] = useState("");
   const daily = useDaily();
+
+  useEffect(() => {
+    const video = document.querySelector("video");
+
+    const tryPlay = () => {
+      if (video && video.paused) {
+        video.muted = true; // make extra sure
+        video.play().catch((err) => {
+          console.warn("Video play failed:", err);
+        });
+      }
+    };
+
+    document.addEventListener("click", tryPlay);
+
+    return () => document.removeEventListener("click", tryPlay);
+  }, []);
   const handleClick = async () => {
     setIsLoading(true);
     try {
@@ -236,6 +253,7 @@ const RavanPremiumInterface = () => {
 
     return () => clearInterval(interval);
   }, [isConnected]);
+
   return (
     <div
       className={`m-4 h-fit  md:h-[580px] md:max-w-6xl mx-auto overflow-hidden rounded-3xl shadow-2xl bg-[#fefbf3] ${
@@ -279,13 +297,13 @@ const RavanPremiumInterface = () => {
               </div>
             ) : (
               <video
-                src="https://cdn.prod.website-files.com/63b2f566abde4cad39ba419f%2F67b5222642c2133d9163ce80_newmike-transcode.mp4"
-                autoPlay
                 muted
+                autoPlay
                 loop
                 playsInline
                 webkit-playsinline="true"
                 className="w-full h-full object-cover"
+                src="https://cdn.prod.website-files.com/63b2f566abde4cad39ba419f%2F67b5222642c2133d9163ce80_newmike-transcode.mp4"
               ></video>
             )}
 
