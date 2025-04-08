@@ -280,10 +280,10 @@ const RavanPremiumInterface = () => {
             ) : (
               <video
                 src={video2}
-                autoPlay
-                muted
-                loop
-                playsInline
+                // autoPlay
+                // muted
+                // loop
+                // playsInline
                 webkit-playsinline="true"
                 className="w-full h-full object-cover"
               ></video>
