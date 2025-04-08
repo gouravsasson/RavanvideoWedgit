@@ -18,6 +18,7 @@ import {
   useVideoTrack,
   useLocalSessionId,
   useMediaTrack,
+  useAppMessage,
 } from "@daily-co/daily-react";
 import axios from "axios";
 import CountryCode from "./CountryCode";
@@ -41,6 +42,7 @@ const validationSchema = yup.object().shape({
 const RavanPremiumInterface = () => {
   const [phone, setPhone] = useState("");
   const { agent_id, schema } = useWidgetContext();
+  const [messages, setMessages] = useState([]);
 
   const [countryCode, setCountryCode] = useState("+1");
   const [formData, setFormData] = useState({
@@ -128,7 +130,22 @@ const RavanPremiumInterface = () => {
       setIsConnected(true);
     } catch (error) {}
   };
+  const sendAppMessage = useAppMessage({
+    onAppMessage: useCallback(
+      (ev: any) => setMessages((m: any) => [...m, ev]),
+      []
+    ),
+  });
+  const handleSendMessage = (messageText: any) => {
+    // Send to all participants
+    sendAppMessage({ message: messageText }, "*");
 
+    // Or send to a specific participant by session ID
+    // sendAppMessage({ message: messageText }, 'participant-session-id');
+
+    // Or send to multiple specific participants
+    // sendAppMessage({ message: messageText }, ['participant-id-1', 'participant-id-2']);
+  };
   const handleEnd = async () => {
     await daily?.leave();
     setIsLoading(false);
@@ -194,10 +211,15 @@ const RavanPremiumInterface = () => {
         console.log("GJHL  Response:", ghlJson);
 
         // Return a success response with the booking and agency notification details
-        return {
-          success: ghlJson.success,
-          ghlJson: ghlJson,
-        };
+        if (
+          ghlJson.status === 422 ||
+          ghlJson.status === 400 ||
+          ghlJson.success === false
+        ) {
+          handleSendMessage(ghlJson.slots);
+        } else {
+          return { error: "Failed to book the appointment" };
+        }
       } else {
         // If booking fails, return error
         console.log("Booking failed:");
