@@ -3,7 +3,6 @@ import {
   Mic,
   MicOff,
   Sparkles,
-  MicOff,
   Camera,
   CameraOff,
   Factory,
@@ -73,8 +72,8 @@ const RavanPremiumInterface = () => {
   const localAudio = useAudioTrack(localSessionId);
   const isCameraEnabled = !localVideo.isOff;
   const isMicEnabled = !localAudio.isOff;
-  // const agent_code = "74693076-7c01-4615-a127-dd7c87a9086b";
-  // const schema_name = "6af30ad4-a50c-4acc-8996-d5f562b6987f";
+  // const agent_code = "9ebc1039-5ecb-4f87-9aa0-b090656290f4";
+  // const schema_name = "09483b13-47ac-47b2-95cf-4ca89b3debfa";
   const agent_code = agent_id;
   const schema_name = schema;
   const [isGhlAppointmentInserted, setIsGhlAppointmentInserted] = useState("");
@@ -173,8 +172,25 @@ const RavanPremiumInterface = () => {
   );
 
   useEffect(() => {
+    const contactData = {
+      schema_name: schema_name,
+      name: formData.name,
+      email: formData.email,
+      phone: `${countryCode}${formData.phone}`,
+      agent_code: agent_code,
+    };
     const insertGhlAppointment = async () => {
-      if (isGhlAppointmentInserted) {
+      const contactResponse = await axios.post(
+        `https://app.snowie.ai/api/create-ghl-contact/`,
+        contactData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (isGhlAppointmentInserted && contactResponse.status === 201) {
+        const contact_id = contactResponse.data.contactId;
         const agentCode = agent_code;
 
         const url = `https://app.snowie.ai/api/agent/leadconnect/appointment/`;
@@ -184,7 +200,7 @@ const RavanPremiumInterface = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             lead_name: formData.name,
-            contact_id: `${countryCode}${formData.phone}`,
+            contact_id: contact_id,
             agent_id: agentCode,
             appointment_book_ts: isGhlAppointmentInserted,
             schema_name: schema_name,
@@ -193,7 +209,7 @@ const RavanPremiumInterface = () => {
         });
 
         const ghlJson = await ghlResponse.json();
-        console.log("GJHL  Response:", ghlJson);
+        console.log("GHL  Response:", ghlJson);
 
         // Return a success response with the booking and agency notification details
         if (
@@ -201,12 +217,22 @@ const RavanPremiumInterface = () => {
           ghlJson.status === 400 ||
           ghlJson.success === false
         ) {
-          sendAppMessage(ghlJson, `${remoteParticipantIds}`);
+          const message = ghlJson;
+          console.log("Sending message to all participants");
+          daily?.sendAppMessage(
+            {
+              result: {
+                success: true,
+                message: "Contact created and appointment scheduled in GHL",
+                contactId: contact_id,
+              },
+            },
+            `${remoteParticipantIds}`
+          );
         } else {
           return { error: "Failed to book the appointment" };
         }
       } else {
-        // If booking fails, return error
         console.log("Booking failed:");
         return { error: "Failed to book the appointment" };
       }
@@ -214,9 +240,6 @@ const RavanPremiumInterface = () => {
     insertGhlAppointment();
   }, [isGhlAppointmentInserted]);
 
-  useEffect(() => {
-    console.log("isConnected", isConnected);
-  }, [isConnected]);
   const toggleVideo = useCallback(() => {
     daily?.setLocalVideo(!isCameraEnabled);
   }, [daily, isCameraEnabled]);

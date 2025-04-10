@@ -35,7 +35,7 @@ function App() {
     <Provider store={jotaiStore}>
       <DailyProvider callObject={callObject} jotaiStore={jotaiStore}>
         {type === "danube" ? <NewVideoForDanub /> : <NewVideo />}
-        {/* <NewVideoForDanub /> */}
+        {/* <NewVideo /> */}
       </DailyProvider>
     </Provider>
   );
