@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   User,
   Mic,
-  MicOff,
   Sparkles,
   MicOff,
   Camera,
