@@ -27,6 +27,7 @@ import "react-phone-input-2/lib/bootstrap.css";
 import video2 from "../assets/video-VEED.mp4";
 import fallback from "../assets/fallback.png";
 import { useWidgetContext } from "./constexts/WidgetContext";
+import video from "../assets/video.mp4";
 // Define a validation schema
 const validationSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -340,7 +341,8 @@ const RavanPremiumInterface = () => {
                 playsInline
                 webkit-playsinline="true"
                 className="w-full h-full object-cover"
-                src="https://cdn.prod.website-files.com/63b2f566abde4cad39ba419f%2F67b5222642c2133d9163ce80_newmike-transcode.mp4"
+                // src="https://cdn.prod.website-files.com/63b2f566abde4cad39ba419f%2F67b5222642c2133d9163ce80_newmike-transcode.mp4"
+                src={video}
                 poster={fallback}
               ></video>
             )}
