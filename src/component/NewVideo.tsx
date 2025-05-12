@@ -151,6 +151,7 @@ const RavanPremiumInterface = () => {
     await daily?.leave();
     setIsLoading(false);
     setIsConnected(false);
+    setOpen(true);
   };
 
   const handleAppMessage = useCallback((event: any) => {
