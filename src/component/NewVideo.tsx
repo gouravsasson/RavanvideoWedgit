@@ -322,9 +322,9 @@ const RavanPremiumInterface = () => {
             <div className="relative border border-orange-200 rounded-lg shadow-lg p-8 max-w-xl w-full bg-gradient-to-br from-amber-50 to-orange-50">
               <button
                 onClick={() => setOpen(false)}
-                className="absolute top-4 right-4"
+                className="absolute top-4 right-4 text-black"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5 text-black" />
               </button>
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-semibold text-orange-900 mb-4">
