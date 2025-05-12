@@ -6,6 +6,7 @@ import {
   Camera,
   CameraOff,
   Factory,
+  X,
 } from "lucide-react";
 import { useDaily } from "@daily-co/daily-react";
 import {
@@ -318,7 +319,13 @@ const RavanPremiumInterface = () => {
       {open && (
         <div className="absolute top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-50">
           <div className="flex justify-center w-full p-4">
-            <div className="border border-orange-200 rounded-lg shadow-lg p-8 max-w-xl w-full bg-gradient-to-br from-amber-50 to-orange-50">
+            <div className="relative border border-orange-200 rounded-lg shadow-lg p-8 max-w-xl w-full bg-gradient-to-br from-amber-50 to-orange-50">
+              <button
+                onClick={() => setOpen(false)}
+                className="absolute top-4 right-4"
+              >
+                <X className="h-5 w-5" />
+              </button>
               <div className="text-center mb-6">
                 <h2 className="text-2xl font-semibold text-orange-900 mb-4">
                   That concludes your trial experience with our AI assistant.
