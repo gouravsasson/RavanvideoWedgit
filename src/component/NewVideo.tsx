@@ -80,6 +80,14 @@ const RavanPremiumInterface = () => {
   const [isGhlAppointmentInserted, setIsGhlAppointmentInserted] = useState("");
   const isUresmuted = useMediaTrack(localSessionId, "audio");
   const daily = useDaily();
+  const [open, setOpen] = useState(false);
+  console.log("open", open);
+
+  const firstLogin = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("first_login="))
+    ?.split("=")[1];
+  console.log("First Login:", firstLogin);
 
   useEffect(() => {
     const video = document.querySelector("video");
@@ -98,37 +106,45 @@ const RavanPremiumInterface = () => {
     return () => document.removeEventListener("click", tryPlay);
   }, []);
   const handleClick = async () => {
-    setIsLoading(true);
-    try {
-      const createConversation = await axios.post(
-        "https://app.snowie.ai/api/start-avatar-call/",
-        {
-          // replica_id: "r3fbe3834a3e",
-          agent_code: agent_code,
-          schema_name: schema_name,
-          name: formData.name,
-          email: formData.email,
-          phone_number: `${countryCode}${formData.phone}`,
-          industry: formData.organization,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
+    if (firstLogin) {
+      setOpen(true);
+    } else {
+      setIsLoading(true);
+      try {
+        const createConversation = await axios.post(
+          "https://app.snowie.ai/api/start-avatar-call/",
+          {
+            // replica_id: "r3fbe3834a3e",
+            agent_code: agent_code,
+            schema_name: schema_name,
+            name: formData.name,
+            email: formData.email,
+            phone_number: `${countryCode}${formData.phone}`,
+            industry: formData.organization,
           },
-        }
-      );
-      const url = createConversation.data.response.conversation_url;
-      await daily
-        ?.join({
-          url: url,
-          startVideoOff: false,
-          startAudioOff: true,
-        })
-        .then(() => {
-          daily?.setLocalAudio(true);
-        });
-      setIsConnected(true);
-    } catch (error) {}
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const url = createConversation.data.response.conversation_url;
+        await daily
+          ?.join({
+            url: url,
+            startVideoOff: false,
+            startAudioOff: true,
+          })
+          .then(() => {
+            daily?.setLocalAudio(true);
+          });
+        setIsConnected(true);
+        const expires = new Date(
+          Date.now() + 20 * 60 * 60 * 1000
+        ).toUTCString(); // 20 hours
+        document.cookie = `first_login=true; expires=${expires}; path=/`;
+      } catch (error) {}
+    }
   };
 
   const handleEnd = async () => {
@@ -294,10 +310,39 @@ const RavanPremiumInterface = () => {
 
   return (
     <div
-      className={`m-4 h-fit  md:h-[580px] md:max-w-6xl mx-auto overflow-hidden rounded-3xl shadow-2xl bg-[#fefbf3] ${
+      className={`relative   m-4 h-fit  md:h-[580px] md:max-w-6xl mx-auto overflow-hidden rounded-3xl shadow-2xl bg-[#fefbf3] ${
         meetingState === "joined-meeting" ? "h-[219.38px]" : "h-[600px]"
       }`}
     >
+      {open && (
+        <div className="absolute top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-50">
+          <div className="flex justify-center w-full p-4">
+            <div className="border border-orange-200 rounded-lg shadow-lg p-8 max-w-xl w-full bg-gradient-to-br from-amber-50 to-orange-50">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-semibold text-orange-900 mb-4">
+                  That concludes your trial experience with our AI assistant.
+                </h2>
+                <p className="text-gray-700 mb-4">
+                  If you'd like to see how this can be tailored for your
+                  business, go ahead and book a full demo with our team — we're
+                  excited to show you what's possible.
+                </p>
+              </div>
+              <div className="flex justify-center">
+                <button
+                  onClick={() => {
+                    setOpen(false);
+                    window.open("https://www.ravan.ai/contact", "_blank");
+                  }}
+                  className="bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-300 shadow-md"
+                >
+                  Book a Demo
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className=" md:flex w-full h-full">
         {/* Avatar Video Side - Expands to full width when connected */}
         <div
