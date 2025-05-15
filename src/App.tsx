@@ -4,6 +4,7 @@ import { createStore, Provider } from "jotai";
 import NewVideo from "./component/NewVideo";
 import NewVideoForDanub from "./component/NewVideoForDanub";
 import { useWidgetContext } from "./component/constexts/WidgetContext";
+import VideoForSnowie from "./component/VideoForSnowie";
 function App() {
   const { type } = useWidgetContext();
   // useEffect(() => {
@@ -35,7 +36,7 @@ function App() {
     <Provider store={jotaiStore}>
       <DailyProvider callObject={callObject} jotaiStore={jotaiStore}>
         {type === "danube" ? <NewVideoForDanub /> : <NewVideo />}
-        {/* <NewVideo /> */}
+        {type === "snowie" && <VideoForSnowie />}
       </DailyProvider>
     </Provider>
   );
