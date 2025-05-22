@@ -35,8 +35,9 @@ function App() {
   return (
     <Provider store={jotaiStore}>
       <DailyProvider callObject={callObject} jotaiStore={jotaiStore}>
-        {type === "danube" ? <NewVideoForDanub /> : <NewVideo />}
+        {type === "danube" && <NewVideoForDanub />}
         {type === "snowie" && <VideoForSnowie />}
+        {type !== "danube" && type !== "snowie" && <NewVideo />}
       </DailyProvider>
     </Provider>
   );
