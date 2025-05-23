@@ -82,11 +82,11 @@ const RavanPremiumInterface = () => {
   const isUresmuted = useMediaTrack(localSessionId, "audio");
   const daily = useDaily();
   const [open, setOpen] = useState(false);
-  const devices = async () => {
-    const devices = await daily?.enumerateDevices();
-    console.log("devices", devices?.devices[0].deviceId);
-  };
-  devices();
+  // const devices = async () => {
+  //   const devices = await daily?.enumerateDevices();
+  //   console.log("devices", devices?.devices[0].deviceId);
+  // };
+  // devices();
 
   const firstLogin = document.cookie
     .split("; ")
@@ -119,7 +119,6 @@ const RavanPremiumInterface = () => {
         const createConversation = await axios.post(
           "https://app.snowie.ai/api/start-avatar-call/",
           {
-            // replica_id: "r3fbe3834a3e",
             agent_code: agent_code,
             schema_name: schema_name,
             name: formData.name,
@@ -135,35 +134,46 @@ const RavanPremiumInterface = () => {
         );
         const url = createConversation.data.response.conversation_url;
 
+        // Join the call first
+        await daily?.join({
+          url: url,
+          startVideoOff: false,
+          startAudioOff: true,
+        });
+
+        // Get available devices
+        const devices = await daily?.enumerateDevices();
+
+        // Select the first audioinput device as an example
+        const audioInput = devices?.devices.find(
+          (d) => d.kind === "audioinput"
+        );
+
+        // Update input settings
         await daily?.updateInputSettings({
           audio: {
             settings: {
               echoCancellation: true,
               noiseSuppression: true,
               autoGainControl: true,
-              deviceId: devices?.devices[0].deviceId,
+              deviceId: audioInput?.deviceId,
             },
             processor: {
               type: "noise-cancellation",
             },
           },
         });
-        await daily
-          ?.join({
-            url: url,
-            startVideoOff: false,
-            startAudioOff: true,
-          })
-          .then(() => {
-            daily?.setLocalAudio(true);
-          });
+
+        await daily?.setLocalAudio(true);
 
         setIsConnected(true);
         const expires = new Date(
           Date.now() + 20 * 60 * 60 * 1000
         ).toUTCString(); // 20 hours
         document.cookie = `first_login=true; expires=${expires}; path=/`;
-      } catch (error) {}
+      } catch (error) {
+        // Handle error
+      }
     }
   };
 
