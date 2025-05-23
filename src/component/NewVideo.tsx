@@ -137,8 +137,18 @@ const RavanPremiumInterface = () => {
             startAudioOff: true,
           })
           .then(() => {
+            daily?.updateInputSettings({
+              audio: {
+                processor: {
+                  type: "noise-cancellation",
+                },
+              },
+            });
+          })
+          .then(() => {
             daily?.setLocalAudio(true);
           });
+
         setIsConnected(true);
         const expires = new Date(
           Date.now() + 20 * 60 * 60 * 1000
