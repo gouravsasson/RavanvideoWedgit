@@ -146,15 +146,7 @@ const RavanPremiumInterface = () => {
                 },
                 processor: {
                   type: "noise-cancellation",
-                }, daily?.updateInputSettings({
-                  audio: {
-                    settings: MediaTrackConstraints,
-                    processor: {
-                      type: "noise-cancellation",
-                    },
-                  },
-                });
-              })
+                },
               },
             });
           })
