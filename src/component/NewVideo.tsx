@@ -82,7 +82,11 @@ const RavanPremiumInterface = () => {
   const isUresmuted = useMediaTrack(localSessionId, "audio");
   const daily = useDaily();
   const [open, setOpen] = useState(false);
-  console.log("open", open);
+  const devices = async () => {
+    const devices = await daily?.enumerateDevices();
+    console.log("devices", devices?.devices[0].deviceId);
+  };
+  devices();
 
   const firstLogin = document.cookie
     .split("; ")
@@ -130,25 +134,25 @@ const RavanPremiumInterface = () => {
           }
         );
         const url = createConversation.data.response.conversation_url;
+
+        await daily?.updateInputSettings({
+          audio: {
+            settings: {
+              echoCancellation: true,
+              noiseSuppression: true,
+              autoGainControl: true,
+              deviceId: devices?.devices[0].deviceId,
+            },
+            processor: {
+              type: "noise-cancellation",
+            },
+          },
+        });
         await daily
           ?.join({
             url: url,
             startVideoOff: false,
             startAudioOff: true,
-          })
-          .then(() => {
-            daily?.updateInputSettings({
-              audio: {
-                settings: {
-                  echoCancellation: true,
-                  noiseSuppression: true,
-                  autoGainControl: true,
-                },
-                processor: {
-                  type: "noise-cancellation",
-                },
-              },
-            });
           })
           .then(() => {
             daily?.setLocalAudio(true);
