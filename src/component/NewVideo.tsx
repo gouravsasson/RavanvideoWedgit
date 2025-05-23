@@ -139,9 +139,22 @@ const RavanPremiumInterface = () => {
           .then(() => {
             daily?.updateInputSettings({
               audio: {
+                settings: {
+                  echoCancellation: true,
+                  noiseSuppression: true,
+                  autoGainControl: true,
+                },
                 processor: {
                   type: "noise-cancellation",
-                },
+                }, daily?.updateInputSettings({
+                  audio: {
+                    settings: MediaTrackConstraints,
+                    processor: {
+                      type: "noise-cancellation",
+                    },
+                  },
+                });
+              })
               },
             });
           })
