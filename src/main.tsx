@@ -6,8 +6,8 @@ import { WidgetProvider } from "./component/constexts/WidgetContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <WidgetProvider
-    agent_id="3b50ca7c-64a8-42ef-b885-43a0708df33c"
-    schema="6af30ad4-a50c-4acc-8996-d5f562b6987f"
+    agent_id="ca9b354f-41a7-46ab-8e6d-8c56b6a1e727"
+    schema="09483b13-47ac-47b2-95cf-4ca89b3debfa"
     type=""
   >
     <StrictMode>

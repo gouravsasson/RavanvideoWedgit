@@ -74,19 +74,34 @@ const RavanPremiumInterface = () => {
   const localAudio = useAudioTrack(localSessionId);
   const isCameraEnabled = !localVideo.isOff;
   const isMicEnabled = !localAudio.isOff;
-  // const agent_code = "9ebc1039-5ecb-4f87-9aa0-b090656290f4";
-  // const schema_name = "09483b13-47ac-47b2-95cf-4ca89b3debfa";
   const agent_code = agent_id;
   const schema_name = schema;
   const [isGhlAppointmentInserted, setIsGhlAppointmentInserted] = useState("");
   const isUresmuted = useMediaTrack(localSessionId, "audio");
   const daily = useDaily();
   const [open, setOpen] = useState(false);
-  // const devices = async () => {
-  //   const devices = await daily?.enumerateDevices();
-  //   console.log("devices", devices?.devices[0].deviceId);
-  // };
-  // devices();
+  const [countdown, setCountdown] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (meetingState === "error") {
+      handleEnd();
+    } else if (meetingState === "joined-meeting") {
+      setIsConnected(true);
+      setCountdown(60);
+    }
+  }, [meetingState]);
+
+  useEffect(() => {
+    let timer;
+    if (countdown > 0) {
+      timer = setTimeout(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    } else {
+      handleEnd();
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
   const firstLogin = document.cookie
     .split("; ")
@@ -110,6 +125,7 @@ const RavanPremiumInterface = () => {
 
     return () => document.removeEventListener("click", tryPlay);
   }, []);
+
   const handleClick = async () => {
     if (firstLogin) {
       setOpen(true);
@@ -455,7 +471,9 @@ const RavanPremiumInterface = () => {
                   }`}
                 ></div>
                 <span className="text-gray-800 text-xs md:text-sm font-medium">
-                  {isConnected ? "Live Conversation" : "Ready to Connect"}
+                  {isConnected
+                    ? `Trial conversation: ${countdown} seconds left`
+                    : "Ready to Connect "}
                 </span>
               </div>
             </div>
