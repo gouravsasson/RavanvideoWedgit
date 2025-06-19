@@ -30,15 +30,17 @@ import fallback from "../assets/fallback.png";
 import { useWidgetContext } from "./constexts/WidgetContext";
 import video from "../assets/video.mp4";
 // Define a validation schema
-const validationSchema = yup.object().shape({
-  name: yup.string().required("Name is required"),
-  email: yup
-    .string()
-    .email("Invalid email format")
-    .required("Email is required"),
-  phone: yup.string().required("Phone is required"),
-  organization: yup.string().required("Organization is required"),
-});
+const createValidationSchema = (customFields) => {
+  const schemaFields = {};
+  customFields.forEach((field) => {
+    let yupField = yup.string().required(`${field.label} is required`);
+    if (field.type === "email") {
+      yupField = yupField.email(`Invalid ${field.label.toLowerCase()} format`);
+    }
+    schemaFields[field.label.toLowerCase().replace(/\s+/g, "_")] = yupField;
+  });
+  return yup.object().shape(schemaFields);
+};
 
 const VideoForSnowie = () => {
   const [phone, setPhone] = useState("");
@@ -46,21 +48,13 @@ const VideoForSnowie = () => {
   const sendAppMessage = useAppMessage();
 
   const [countryCode, setCountryCode] = useState("+1");
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    organization: "",
-  });
+  const [formData, setFormData] = useState({});
   const [isConnecting, setIsConnecting] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
-  const [errors, setErrors] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    organization: "",
-  });
+  const [errors, setErrors] = useState({});
+  const [widgetSettings, setWidgetSettings] = useState({});
+  const [validationSchema, setValidationSchema] = useState(null);
 
   const handleCountryCode = (data) => {
     setCountryCode(data);
@@ -74,8 +68,8 @@ const VideoForSnowie = () => {
   const localAudio = useAudioTrack(localSessionId);
   const isCameraEnabled = !localVideo.isOff;
   const isMicEnabled = !localAudio.isOff;
-  // const agent_code = "9ebc1039-5ecb-4f87-9aa0-b090656290f4";
-  // const schema_name = "09483b13-47ac-47b2-95cf-4ca89b3debfa";
+  // const agent_code = "32e5be8e-f0be-448c-8874-23e882a113ce";
+  // const schema_name = "6af30ad4-a50c-4acc-8996-d5f562b6987f";
   const agent_code = agent_id;
   const schema_name = schema;
   const [isGhlAppointmentInserted, setIsGhlAppointmentInserted] = useState("");
@@ -106,22 +100,68 @@ const VideoForSnowie = () => {
 
     return () => document.removeEventListener("click", tryPlay);
   }, []);
+
+  useEffect(() => {
+    const fetchWidgetSettings = async () => {
+      try {
+        const response = await axios.get(
+          `https://app.snowie.ai/api/avatar-widget-settings/${schema_name}/${agent_code}/`
+        );
+        const settings = response.data.response || {};
+        setWidgetSettings(settings);
+
+        // Initialize formData and validation schema based on custom_form_fields
+        if (
+          settings.custom_form_fields &&
+          settings.custom_form_fields.length > 0
+        ) {
+          const initialFormData = {};
+          settings.custom_form_fields.forEach((field) => {
+            initialFormData[field.label.toLowerCase().replace(/\s+/g, "_")] =
+              "";
+          });
+          setFormData(initialFormData);
+          setValidationSchema(
+            createValidationSchema(settings.custom_form_fields)
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching widget settings:", error);
+      }
+    };
+
+    fetchWidgetSettings();
+  }, [agent_code]);
+
   const handleClick = async () => {
     if (firstLogin) {
       setOpen(true);
     } else {
       setIsLoading(true);
       try {
+        const customFormFieldsObject = {};
+
+        // If custom form fields exist, map the form data to field labels
+        if (
+          widgetSettings.custom_form_fields &&
+          widgetSettings.custom_form_fields.length > 0
+        ) {
+          widgetSettings.custom_form_fields.forEach((field) => {
+            const fieldKey = field.label.toLowerCase().replace(/\s+/g, "_");
+            const fieldValue = formData[fieldKey] || "";
+
+            // Use the original field label as the key
+            customFormFieldsObject[field.label] = fieldValue;
+          });
+        }
+
         const createConversation = await axios.post(
           "https://app.snowie.ai/api/ravan-start-avatar-call/",
           {
             // replica_id: "r3fbe3834a3e",
             agent_code: agent_code,
             schema_name: schema_name,
-            name: formData.name,
-            email: formData.email,
-            phone_number: `${countryCode}${formData.phone}`,
-            industry: formData.organization,
+            custom_form_fields: customFormFieldsObject, // Send as object with label as key
           },
           {
             headers: {
@@ -276,8 +316,14 @@ const VideoForSnowie = () => {
     e.preventDefault();
     setIsConnecting(true);
     try {
-      await validationSchema.validate(formData, { abortEarly: false });
-      // Proceed with form submission
+      if (
+        widgetSettings.custom_form_fields &&
+        widgetSettings.custom_form_fields.length > 0 &&
+        validationSchema
+      ) {
+        await validationSchema.validate(formData, { abortEarly: false });
+        console.log("Form is valid:", formData);
+      } // Proceed with form submission
       console.log("Form is valid:", formData);
       await handleClick();
     } catch (validationErrors) {
@@ -315,6 +361,12 @@ const VideoForSnowie = () => {
       className={`relative   m-4 h-fit  md:h-[580px] md:max-w-6xl mx-auto overflow-hidden rounded-3xl shadow-2xl bg-[#fefbf3] ${
         meetingState === "joined-meeting" ? "h-[219.38px]" : "h-[600px]"
       }`}
+      style={{
+        backgroundColor: widgetSettings.background_color || "#fefbf3",
+        border: widgetSettings.border_color
+          ? `1px solid ${widgetSettings.border_color}`
+          : "none",
+      }}
     >
       {open && (
         <div className="absolute top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-50">
@@ -358,7 +410,11 @@ const VideoForSnowie = () => {
             isConnected ? "md:w-full" : "md:w-2/3"
           }`}
           style={{
-            boxShadow: isConnected ? "none" : "10px 0 30px rgba(0,0,0,0.03)",
+            boxShadow: isConnected
+              ? "none"
+              : widgetSettings.border_color
+              ? `10px 0 30px ${widgetSettings.border_color}33`
+              : "10px 0 30px rgba(0,0,0,0.03)",
           }}
         >
           <div className="w-full h-full">
@@ -395,7 +451,7 @@ const VideoForSnowie = () => {
                 webkit-playsinline="true"
                 className="w-full h-full object-cover"
                 // src="https://cdn.prod.website-files.com/63b2f566abde4cad39ba419f%2F67b5222642c2133d9163ce80_newmike-transcode.mp4"
-                src={video}
+                src={widgetSettings.video || video}
                 poster={fallback}
               ></video>
             )}
@@ -406,8 +462,12 @@ const VideoForSnowie = () => {
                 isConnected ? "rounded-3xl" : "rounded-l-3xl"
               }`}
               style={{
-                boxShadow: "inset 0 0 30px rgba(255, 85, 0, 0.15)",
-                border: "1px solid rgba(255, 85, 0, 0.1)",
+                boxShadow: widgetSettings.border_color
+                  ? `inset 0 0 30px ${widgetSettings.border_color}26`
+                  : "inset 0 0 30px rgba(255, 85, 0, 0.15)",
+                border: widgetSettings.border_color
+                  ? `1px solid ${widgetSettings.border_color}1A`
+                  : "1px solid rgba(255, 85, 0, 0.1)",
               }}
             ></div>
 
@@ -425,7 +485,10 @@ const VideoForSnowie = () => {
                     isConnected ? "bg-green-500 animate-pulse" : "bg-orange-500"
                   }`}
                 ></div>
-                <span className="text-gray-800 text-xs md:text-sm font-medium">
+                <span
+                  className="text-gray-800 text-xs md:text-sm font-medium"
+                  style={{ color: widgetSettings.text_color || "#333333" }}
+                >
                   {isConnected ? "Live Conversation" : "Ready to Connect"}
                 </span>
               </div>
@@ -486,7 +549,8 @@ const VideoForSnowie = () => {
                             ? Math.sin((i / 5) * Math.PI) * audioLevel * 16
                             : 0)
                         }px`,
-                        backgroundColor: "#ff5500",
+                        backgroundColor:
+                          widgetSettings.button_color || "#ff5500",
                         transition: "height 0.1s ease-in-out",
                         opacity: isConnected ? 1 : 0.4,
                       }}
@@ -514,151 +578,192 @@ const VideoForSnowie = () => {
           <div
             className=" md-w-[500px] flex flex-col justify-center p-8 z-10 bg-white/50 backdrop-blur-sm rounded-r-3xl transition-all duration-700 ease-in-out"
             style={{
-              boxShadow: "inset 0 0 20px rgba(255, 255, 255, 0.5)",
-              border: "1px solid rgba(255, 255, 255, 0.3)",
+              backgroundColor: widgetSettings.background_color
+                ? `${widgetSettings.background_color}80`
+                : "rgba(255, 255, 255, 0.5)",
+              border: widgetSettings.border_color
+                ? `1px solid ${widgetSettings.border_color}4D`
+                : "1px solid rgba(255, 255, 255, 0.3)",
             }}
           >
-            <div className="space-y-7">
-              <div className="hidden md:block text-center space-y-2">
-                <h2 className="text-3xl font-bold" style={{ color: "#222" }}>
+            <div className="space-y-7 overflow-y-auto">
+              <div className="text-center space-y-2">
+                {widgetSettings.bot_logo && (
+                  <img
+                    src={widgetSettings.bot_logo}
+                    alt="Bot Logo"
+                    className="mx-auto h-16 w-auto object-contain"
+                  />
+                )}
+                <h2
+                  className="text-3xl font-bold"
+                  style={{ color: widgetSettings.text_color || "#222" }}
+                >
                   Let's Get Started
                 </h2>
-                <p className="text-gray-600">Connect with our AI assistant</p>
+                <p style={{ color: widgetSettings.text_color || "#606060" }}>
+                  Connect with {widgetSettings.bot_name || "our AI assistant"}
+                </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="space-y-4">
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-gray-700 pl-1">
-                      Full Name
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                          <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
-                      </div>
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3 pl-11 text-gray-900 transition outline-none"
-                        placeholder="John Doe"
-                        style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
-                      />
+                {/* Conditionally render form fields if they exist */}
+                {widgetSettings.custom_form_fields &&
+                  widgetSettings.custom_form_fields.length > 0 && (
+                    <div className="space-y-4">
+                      {widgetSettings.custom_form_fields.map((field) => (
+                        <div key={field.id} className="space-y-1.5">
+                          <label
+                            className="text-sm font-medium text-gray-700 pl-1"
+                            style={{
+                              color: widgetSettings.text_color || "#333333",
+                            }}
+                          >
+                            {field.label}
+                          </label>
+                          <div className="relative">
+                            {field.type !== "tel" && (
+                              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                {field.type === "text" &&
+                                  field.label
+                                    .toLowerCase()
+                                    .includes("name") && (
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      className="h-5 w-5"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      strokeWidth="2"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                    >
+                                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                      <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                  )}
+                                {field.type === "email" && (
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-5 w-5"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                  >
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                  </svg>
+                                )}
+                                {field.type === "text" &&
+                                  field.label
+                                    .toLowerCase()
+                                    .includes("industry") && (
+                                    <Factory className="h-5 w-5" />
+                                  )}
+                              </div>
+                            )}
+                            {field.type === "tel" ? (
+                              <div className="relative flex items-center">
+                                <CountryCode data={handleCountryCode} />
+                                <input
+                                  type="tel"
+                                  name={field.label
+                                    .toLowerCase()
+                                    .replace(/\s+/g, "_")}
+                                  value={
+                                    formData[
+                                      field.label
+                                        .toLowerCase()
+                                        .replace(/\s+/g, "_")
+                                    ]
+                                  }
+                                  onChange={handleChange}
+                                  required
+                                  className="w-full h-[50px] bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl rounded-l-none px-4 py-3 pl-11 text-gray-900 transition outline-none"
+                                  placeholder="(555) 000-0000"
+                                  style={{
+                                    boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+                                  }}
+                                />
+                              </div>
+                            ) : (
+                              <input
+                                type={field.type}
+                                name={field.label
+                                  .toLowerCase()
+                                  .replace(/\s+/g, "_")}
+                                value={
+                                  formData[
+                                    field.label
+                                      .toLowerCase()
+                                      .replace(/\s+/g, "_")
+                                  ]
+                                }
+                                onChange={handleChange}
+                                required
+                                className="w-full bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3 pl-11 text-gray-900 transition outline-none"
+                                placeholder={
+                                  field.type === "email"
+                                    ? "john@example.com"
+                                    : field.label
+                                }
+                                style={{
+                                  boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+                                }}
+                              />
+                            )}
+                            {errors[
+                              field.label.toLowerCase().replace(/\s+/g, "_")
+                            ] && (
+                              <p className="text-red-500 text-xs mt-1">
+                                {
+                                  errors[
+                                    field.label
+                                      .toLowerCase()
+                                      .replace(/\s+/g, "_")
+                                  ]
+                                }
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-gray-700 pl-1">
-                      Email
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                          <polyline points="22,6 12,13 2,6"></polyline>
-                        </svg>
-                      </div>
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3 pl-11 text-gray-900 transition outline-none"
-                        placeholder="john@example.com"
-                        style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-gray-700 pl-1">
-                      Phone Number
-                    </label>
-                    <div className="relative flex items-center">
-                      <CountryCode data={handleCountryCode} />
-
-                      {/* <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                        </svg>
-                      </div> */}
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        required
-                        className="h-[50px] w-[216px] md:w-[236px] bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl rounded-l-none px-4 py-3 pl-11 text-gray-900 transition outline-none"
-                        placeholder="(555) 000-0000"
-                        style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-medium text-gray-700 pl-1">
-                      Industry
-                    </label>
-                    <div className="relative">
-                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                        <Factory className="h-5 w-5" />
-                      </div>
-                      <input
-                        type="text"
-                        name="organization"
-                        value={formData.organization}
-                        onChange={handleChange}
-                        required
-                        className="w-full bg-white/60 backdrop-blur-sm border border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 rounded-xl px-4 py-3 pl-11 text-gray-900 transition outline-none"
-                        placeholder="Enter your industry"
-                        style={{ boxShadow: "0 2px 6px rgba(0,0,0,0.05)" }}
-                      />
-                    </div>
-                  </div>
-                </div>
+                  )}
 
                 <button
                   type="submit"
                   disabled={isConnecting}
-                  className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-xl text-white font-medium text-lg transition-all shadow-lg"
+                  className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-xl text-lg font-medium transition-all shadow-lg"
                   style={{
                     background: isConnecting
                       ? "#ccc"
+                      : widgetSettings.button_color
+                      ? widgetSettings.button_color
                       : "linear-gradient(90deg, #ff5500 0%, #ff7e38 100%)",
+                    color: widgetSettings.button_text_color || "#ffffff",
                     boxShadow: isConnecting
                       ? "none"
+                      : widgetSettings.button_color
+                      ? `0 4px 10px ${widgetSettings.button_color}4D`
                       : "0 4px 10px rgba(255, 85, 0, 0.3)",
+                  }}
+                  onMouseOver={(e) => {
+                    if (widgetSettings.button_hover_color && !isConnecting) {
+                      e.currentTarget.style.background =
+                        widgetSettings.button_hover_color;
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (!isConnecting) {
+                      e.currentTarget.style.background =
+                        widgetSettings.button_color
+                          ? widgetSettings.button_color
+                          : "linear-gradient(90deg, #ff5500 0%, #ff7e38 100%)";
+                    }
                   }}
                 >
                   {isConnecting ? (
@@ -699,7 +804,7 @@ const VideoForSnowie = () => {
                       >
                         <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                       </svg>
-                      Connect with AI Assistant
+                      Connect with {widgetSettings.bot_name || "AI Assistant"}
                     </>
                   )}
                 </button>
