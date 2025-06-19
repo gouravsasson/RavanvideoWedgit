@@ -92,12 +92,12 @@ const RavanPremiumInterface = () => {
   }, [meetingState]);
 
   useEffect(() => {
-    let timer;
-    if (countdown > 0) {
+    let timer: NodeJS.Timeout;
+    if (countdown && countdown > 0) {
       timer = setTimeout(() => {
-        setCountdown((prev) => prev - 1);
+        setCountdown((prev) => (prev ? prev - 1 : null));
       }, 1000);
-    } else {
+    } else if (countdown === 0) {
       handleEnd();
     }
     return () => clearTimeout(timer);
@@ -127,6 +127,7 @@ const RavanPremiumInterface = () => {
   }, []);
 
   const handleClick = async () => {
+    console.log("handleClick running");
     if (firstLogin) {
       setOpen(true);
     } else {
@@ -194,6 +195,7 @@ const RavanPremiumInterface = () => {
   };
 
   const handleEnd = async () => {
+    console.log("handleEnd running");
     await daily?.leave();
     setIsLoading(false);
     setIsConnected(false);
@@ -366,7 +368,10 @@ const RavanPremiumInterface = () => {
           <div className="flex justify-center w-full p-4">
             <div className="relative border border-orange-200 rounded-lg shadow-lg p-8 max-w-xl w-full bg-gradient-to-br from-amber-50 to-orange-50">
               <button
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  console.log("cancil clicked");
+                  setOpen(false);
+                }}
                 className="absolute top-4 right-4 text-black"
               >
                 <X className="h-5 w-5 text-black" />
@@ -384,6 +389,7 @@ const RavanPremiumInterface = () => {
               <div className="flex justify-center">
                 <button
                   onClick={() => {
+                    console.log("book demo clicked");
                     setOpen(false);
                     window.open("https://www.ravan.ai/contact", "_blank");
                   }}
