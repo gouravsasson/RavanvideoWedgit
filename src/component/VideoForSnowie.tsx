@@ -372,7 +372,7 @@ const VideoForSnowie = () => {
           : "none",
       }}
     >
-      {open && (
+      {/* {open && (
         <div className="absolute top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-50">
           <div className="flex justify-center w-full p-4">
             <div className="relative border border-orange-200 rounded-lg shadow-lg p-8 max-w-xl w-full bg-gradient-to-br from-amber-50 to-orange-50">
@@ -406,7 +406,7 @@ const VideoForSnowie = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
       <div className=" md:flex w-full h-full">
         {/* Avatar Video Side - Expands to full width when connected */}
         <div
