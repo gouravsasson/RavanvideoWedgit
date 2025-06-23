@@ -82,7 +82,11 @@ const VideoForSnowie = () => {
     .split("; ")
     .find((row) => row.startsWith("first_login="))
     ?.split("=")[1];
-  console.log("First Login:", firstLogin);
+
+  useEffect(() => {
+    document.cookie =
+      "first_login=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  }, []);
 
   useEffect(() => {
     const video = document.querySelector("video");
@@ -180,10 +184,10 @@ const VideoForSnowie = () => {
             daily?.setLocalAudio(true);
           });
         setIsConnected(true);
-        const expires = new Date(
-          Date.now() + 20 * 60 * 60 * 1000
-        ).toUTCString(); // 20 hours
-        document.cookie = `first_login=true; expires=${expires}; path=/`;
+        // const expires = new Date(
+        //   Date.now() + 20 * 60 * 60 * 1000
+        // ).toUTCString(); // 20 hours
+        // document.cookie = `first_login=true; expires=${expires}; path=/`;
       } catch (error) {}
     }
   };

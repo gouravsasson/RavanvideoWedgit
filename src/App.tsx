@@ -32,12 +32,20 @@ function App() {
   const jotaiStore = createStore();
   const callObject = useCallObject({});
 
+  function renderVideoComponent() {
+    if (type === "danube") {
+      return <NewVideoForDanub />;
+    } else if (type === "snowie") {
+      return <VideoForSnowie />;
+    } else {
+      return <NewVideo />;
+    }
+  }
+
   return (
     <Provider store={jotaiStore}>
       <DailyProvider callObject={callObject} jotaiStore={jotaiStore}>
-        {type === "danube" && <NewVideoForDanub />}
-        {type === "snowie" && <VideoForSnowie />}
-        {type !== "danube" && type !== "snowie" && <NewVideo />}
+        {renderVideoComponent()}
       </DailyProvider>
     </Provider>
   );
