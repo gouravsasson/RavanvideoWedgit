@@ -5,6 +5,7 @@ import NewVideo from "./component/NewVideo";
 import NewVideoForDanub from "./component/NewVideoForDanub";
 import { useWidgetContext } from "./component/constexts/WidgetContext";
 import VideoForSnowie from "./component/VideoForSnowie";
+import VideoForRavan from "./component/VideoForRavan";
 function App() {
   const { type } = useWidgetContext();
   // useEffect(() => {
@@ -37,7 +38,9 @@ function App() {
       <DailyProvider callObject={callObject} jotaiStore={jotaiStore}>
         {type === "danube" && <NewVideoForDanub />}
         {type === "snowie" && <VideoForSnowie />}
-        {type !== "danube" && type !== "snowie" && <NewVideo />}
+        {type==="ravan" && <VideoForRavan/>}
+        {type !== "danube" && type !== "snowie" && type!=="ravan" && <NewVideo />}
+        {/* <VideoForRavan/> */}
       </DailyProvider>
     </Provider>
   );
