@@ -74,19 +74,34 @@ const RavanPremiumInterface = () => {
   const localAudio = useAudioTrack(localSessionId);
   const isCameraEnabled = !localVideo.isOff;
   const isMicEnabled = !localAudio.isOff;
-  // const agent_code = "9ebc1039-5ecb-4f87-9aa0-b090656290f4";
-  // const schema_name = "09483b13-47ac-47b2-95cf-4ca89b3debfa";
   const agent_code = agent_id;
   const schema_name = schema;
   const [isGhlAppointmentInserted, setIsGhlAppointmentInserted] = useState("");
   const isUresmuted = useMediaTrack(localSessionId, "audio");
   const daily = useDaily();
   const [open, setOpen] = useState(false);
-  // const devices = async () => {
-  //   const devices = await daily?.enumerateDevices();
-  //   console.log("devices", devices?.devices[0].deviceId);
-  // };
-  // devices();
+  const [countdown, setCountdown] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (meetingState === "error") {
+      handleEnd();
+    } else if (meetingState === "joined-meeting") {
+      setIsConnected(true);
+      setCountdown(60);
+    }
+  }, [meetingState]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (countdown && countdown > 0) {
+      timer = setTimeout(() => {
+        setCountdown((prev) => (prev ? prev - 1 : null));
+      }, 1000);
+    } else if (countdown === 0) {
+      handleEnd();
+    }
+    return () => clearTimeout(timer);
+  }, [countdown]);
 
   const firstLogin = document.cookie
     .split("; ")
@@ -110,7 +125,9 @@ const RavanPremiumInterface = () => {
 
     return () => document.removeEventListener("click", tryPlay);
   }, []);
+
   const handleClick = async () => {
+    console.log("handleClick running");
     if (firstLogin) {
       setOpen(true);
     } else {
@@ -178,6 +195,7 @@ const RavanPremiumInterface = () => {
   };
 
   const handleEnd = async () => {
+    console.log("handleEnd running");
     await daily?.leave();
     setIsLoading(false);
     setIsConnected(false);
@@ -350,7 +368,10 @@ const RavanPremiumInterface = () => {
           <div className="flex justify-center w-full p-4">
             <div className="relative border border-orange-200 rounded-lg shadow-lg p-8 max-w-xl w-full bg-gradient-to-br from-amber-50 to-orange-50">
               <button
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  console.log("cancil clicked");
+                  setOpen(false);
+                }}
                 className="absolute top-4 right-4 text-black"
               >
                 <X className="h-5 w-5 text-black" />
@@ -368,6 +389,7 @@ const RavanPremiumInterface = () => {
               <div className="flex justify-center">
                 <button
                   onClick={() => {
+                    console.log("book demo clicked");
                     setOpen(false);
                     window.open("https://www.ravan.ai/contact", "_blank");
                   }}
@@ -455,7 +477,9 @@ const RavanPremiumInterface = () => {
                   }`}
                 ></div>
                 <span className="text-gray-800 text-xs md:text-sm font-medium">
-                  {isConnected ? "Live Conversation" : "Ready to Connect"}
+                  {isConnected
+                    ? `Trial conversation: ${countdown} seconds left`
+                    : "Ready to Connect "}
                 </span>
               </div>
             </div>

@@ -82,7 +82,11 @@ const VideoForSnowie = () => {
     .split("; ")
     .find((row) => row.startsWith("first_login="))
     ?.split("=")[1];
-  console.log("First Login:", firstLogin);
+
+  useEffect(() => {
+    document.cookie =
+      "first_login=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  }, []);
 
   useEffect(() => {
     const video = document.querySelector("video");
@@ -180,10 +184,10 @@ const VideoForSnowie = () => {
             daily?.setLocalAudio(true);
           });
         setIsConnected(true);
-        const expires = new Date(
-          Date.now() + 20 * 60 * 60 * 1000
-        ).toUTCString(); // 20 hours
-        document.cookie = `first_login=true; expires=${expires}; path=/`;
+        // const expires = new Date(
+        //   Date.now() + 20 * 60 * 60 * 1000
+        // ).toUTCString(); // 20 hours
+        // document.cookie = `first_login=true; expires=${expires}; path=/`;
       } catch (error) {}
     }
   };
@@ -368,7 +372,7 @@ const VideoForSnowie = () => {
           : "none",
       }}
     >
-      {open && (
+      {/* {open && (
         <div className="absolute top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center z-50">
           <div className="flex justify-center w-full p-4">
             <div className="relative border border-orange-200 rounded-lg shadow-lg p-8 max-w-xl w-full bg-gradient-to-br from-amber-50 to-orange-50">
@@ -402,7 +406,7 @@ const VideoForSnowie = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
       <div className=" md:flex w-full h-full">
         {/* Avatar Video Side - Expands to full width when connected */}
         <div
