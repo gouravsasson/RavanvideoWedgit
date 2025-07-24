@@ -38,7 +38,10 @@ function App() {
       return <NewVideoForDanub />;
     } else if (type === "snowie") {
       return <VideoForSnowie />;
-    } else {
+    }else if(type==="ravan"){
+      return <VideoForRavan/>
+    } 
+    else {
       return <NewVideo />;
     }
   }
