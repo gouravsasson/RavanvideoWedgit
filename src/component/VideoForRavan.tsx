@@ -874,7 +874,7 @@ const VideoForRavan = () => {
                   <button
                     type="submit"
                     disabled={isConnecting || isWidgetSettingsLoading}
-                    className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-xl text-lg font-medium transition-all shadow-lg"
+                    className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-xl text-lg font-medium transition-all shadow-lg disabled:bg-gray-500 disabled:cursor-not-allowed"
                     style={{
                       background: isConnecting
                         ? "#ccc"
