@@ -29,7 +29,7 @@ import video2 from "../assets/video-VEED.mp4";
 import fallback from "../assets/fallback.png";
 import { useWidgetContext } from "./constexts/WidgetContext";
 import video from "../assets/video.mp4";
-import { useRequestPermissions } from '../components/cvi/hooks/use-request-permissions';
+import { useRequestPermissions } from "../components/cvi/hooks/use-request-permissions";
 // Define a validation schema
 const createValidationSchema = (customFields) => {
   const schemaFields = {};
@@ -63,6 +63,7 @@ const VideoForRavan = () => {
   const [errors, setErrors] = useState({});
   const [widgetSettings, setWidgetSettings] = useState({});
   const [validationSchema, setValidationSchema] = useState(null);
+  const [isWidgetSettingsLoading, setIsWidgetSettingsLoading] = useState(true);
   const requestPermissions = useRequestPermissions();
 
   const handleCountryCode = (data) => {
@@ -124,6 +125,7 @@ const VideoForRavan = () => {
   useEffect(() => {
     const fetchWidgetSettings = async () => {
       try {
+        setIsWidgetSettingsLoading(true);
         const response = await axios.get(
           `https://app.snowie.ai/api/avatar-widget-settings/${schema_name}/${agent_code}/`
         );
@@ -147,6 +149,8 @@ const VideoForRavan = () => {
         }
       } catch (error) {
         console.error("Error fetching widget settings:", error);
+      } finally {
+        setIsWidgetSettingsLoading(false);
       }
     };
 
@@ -174,8 +178,8 @@ const VideoForRavan = () => {
             customFormFieldsObject[field.label] = fieldValue;
           });
         }
-        await requestPermissions()
-        console.log("await permission called")
+        await requestPermissions();
+        console.log("await permission called");
         const createConversation = await axios.post(
           "https://app.snowie.ai/api/ravan-start-avatar-call/",
           {
@@ -190,7 +194,7 @@ const VideoForRavan = () => {
             },
           }
         );
-        console.log("api called")
+        console.log("api called");
         const url = createConversation.data.response.conversation_url;
         await daily
           ?.join({
@@ -869,7 +873,7 @@ const VideoForRavan = () => {
                     )}
                   <button
                     type="submit"
-                    disabled={isConnecting}
+                    disabled={isConnecting || isWidgetSettingsLoading}
                     className="w-full flex items-center justify-center space-x-2 py-3.5 px-6 rounded-xl text-lg font-medium transition-all shadow-lg"
                     style={{
                       background: isConnecting
