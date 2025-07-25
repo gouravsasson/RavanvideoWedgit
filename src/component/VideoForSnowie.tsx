@@ -29,6 +29,8 @@ import video2 from "../assets/video-VEED.mp4";
 import fallback from "../assets/fallback.png";
 import { useWidgetContext } from "./constexts/WidgetContext";
 import video from "../assets/video.mp4";
+import { useRequestPermissions } from '../components/cvi/hooks/use-request-permissions';
+
 // Define a validation schema
 const createValidationSchema = (customFields) => {
   const schemaFields = {};
@@ -46,6 +48,7 @@ const VideoForSnowie = () => {
   const [phone, setPhone] = useState("");
   const { agent_id, schema } = useWidgetContext();
   const sendAppMessage = useAppMessage();
+  const requestPermissions = useRequestPermissions();
 
   const [countryCode, setCountryCode] = useState("+1");
   const [formData, setFormData] = useState({});
@@ -158,7 +161,7 @@ const VideoForSnowie = () => {
             customFormFieldsObject[field.label] = fieldValue;
           });
         }
-
+        await requestPermissions()
         const createConversation = await axios.post(
           "https://app.snowie.ai/api/ravan-start-avatar-call/",
           {

@@ -29,6 +29,7 @@ import video2 from "../assets/video-VEED.mp4";
 import fallback from "../assets/fallback.png";
 import { useWidgetContext } from "./constexts/WidgetContext";
 import video from "../assets/video.mp4";
+import { useRequestPermissions } from '../components/cvi/hooks/use-request-permissions';
 // Define a validation schema
 const createValidationSchema = (customFields) => {
   const schemaFields = {};
@@ -62,6 +63,7 @@ const VideoForRavan = () => {
   const [errors, setErrors] = useState({});
   const [widgetSettings, setWidgetSettings] = useState({});
   const [validationSchema, setValidationSchema] = useState(null);
+  const requestPermissions = useRequestPermissions();
 
   const handleCountryCode = (data) => {
     setCountryCode(data);
@@ -172,7 +174,8 @@ const VideoForRavan = () => {
             customFormFieldsObject[field.label] = fieldValue;
           });
         }
-
+        await requestPermissions()
+        console.log("await permission called")
         const createConversation = await axios.post(
           "https://app.snowie.ai/api/ravan-start-avatar-call/",
           {
@@ -187,6 +190,7 @@ const VideoForRavan = () => {
             },
           }
         );
+        console.log("api called")
         const url = createConversation.data.response.conversation_url;
         await daily
           ?.join({

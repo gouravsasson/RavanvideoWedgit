@@ -26,6 +26,7 @@ import * as yup from "yup";
 import "react-phone-input-2/lib/bootstrap.css";
 import video from "../assets/video.mp4";
 import video2 from "../assets/video-VEED.mp4";
+import { useRequestPermissions } from '../components/cvi/hooks/use-request-permissions';
 
 // Define a validation schema
 const validationSchema = yup.object().shape({
@@ -61,6 +62,7 @@ const NewVideoForDanub = () => {
   const handleCountryCode = (data) => {
     setCountryCode(data);
   };
+  const requestPermissions = useRequestPermissions();
 
   const meetingState = useMeetingState();
   const [isLoading, setIsLoading] = useState(false);
@@ -81,6 +83,7 @@ const NewVideoForDanub = () => {
   const handleClick = async () => {
     setIsLoading(true);
     try {
+      await requestPermissions()
       const createConversation = await axios.post(
         "https://app.snowie.ai/api/start-avatar-call/",
         {

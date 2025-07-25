@@ -29,6 +29,8 @@ import video2 from "../assets/video-VEED.mp4";
 import fallback from "../assets/fallback.png";
 import { useWidgetContext } from "./constexts/WidgetContext";
 import video from "../assets/video.mp4";
+import { useRequestPermissions } from '../components/cvi/hooks/use-request-permissions';
+
 // Define a validation schema
 const validationSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -44,6 +46,7 @@ const RavanPremiumInterface = () => {
   const [phone, setPhone] = useState("");
   const { agent_id, schema } = useWidgetContext();
   const sendAppMessage = useAppMessage();
+  const requestPermissions = useRequestPermissions();
 
   const [countryCode, setCountryCode] = useState("+1");
   const [formData, setFormData] = useState({
@@ -133,6 +136,7 @@ const RavanPremiumInterface = () => {
     } else {
       setIsLoading(true);
       try {
+        await requestPermissions()
         const createConversation = await axios.post(
           "https://app.snowie.ai/api/start-avatar-call/",
           {
@@ -356,6 +360,14 @@ const RavanPremiumInterface = () => {
 
     return () => clearInterval(interval);
   }, [isConnected]);
+
+  daily?.updateInputSettings({
+    audio: {
+      processor: {
+        type: "noise-cancellation",
+      },
+    },
+  });
 
   return (
     <div
