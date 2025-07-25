@@ -243,6 +243,14 @@ const NewVideoForDanub = () => {
 
     return () => clearInterval(interval);
   }, [isConnected]);
+
+  daily?.updateInputSettings({
+    audio: {
+      processor: {
+        type: "noise-cancellation",
+      },
+    },
+  });
   return (
     <div
       className={`m-4 h-fit  md:h-[580px] md:max-w-6xl mx-auto overflow-hidden rounded-3xl shadow-2xl bg-[#fefbf3] ${

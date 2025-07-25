@@ -359,6 +359,13 @@ const VideoForSnowie = () => {
 
     return () => clearInterval(interval);
   }, [isConnected]);
+  daily?.updateInputSettings({
+    audio: {
+      processor: {
+        type: "noise-cancellation",
+      },
+    },
+  });
 
   return (
     <div
