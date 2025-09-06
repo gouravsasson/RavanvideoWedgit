@@ -6,6 +6,7 @@ import NewVideoForDanub from "./component/NewVideoForDanub";
 import { useWidgetContext } from "./component/constexts/WidgetContext";
 import VideoForSnowie from "./component/VideoForSnowie";
 import VideoForRavan from "./component/VideoForRavan";
+import NewVideoForReels from "./component/NewVideoForReels";
 function App() {
   const { type } = useWidgetContext();
   // useEffect(() => {
@@ -38,10 +39,11 @@ function App() {
       return <NewVideoForDanub />;
     } else if (type === "snowie") {
       return <VideoForSnowie />;
-    }else if(type==="ravan"){
-      return <VideoForRavan/>
-    } 
-    else {
+    } else if (type === "ravan") {
+      return <VideoForRavan />;
+    } else if (type === "reels") {
+      return <NewVideoForReels />;
+    } else {
       return <NewVideo />;
     }
   }
